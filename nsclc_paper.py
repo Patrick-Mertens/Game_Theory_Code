@@ -38,11 +38,13 @@ from matplotlib.lines import Line2D
 
 ###############################################################################
 
-studies = ['a', 'a', 'c', 'd', 'e']
+studies = ['a', 'a', 'c', 'd', 'e'] #c this one get overwirtten, I think this one was for older data
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
 splits = [True, True, False, True, True]
-trends = ['Up', 'Down', 'Fluctuate', 'Evolution']
+trends = ['Up', 'Down', 'Fluctuate', 'Evolution'] #c fit.py doesnt include evolution
 studies =['1', '2', '3', '4', '5']
+
+#c I assume that this was teh first run
 #studies=['1']
 #functions=['Exponential']
 
@@ -55,14 +57,14 @@ minList = []
 
 for studyName in studies:
     #rawDataPath = os.path.join(r"D:\Spider Project\rawData\new Files", studyName + '_m.xlsx')
-    rawDataPath = os.path.join(dataset_path,  'Study_' + studyName + '_1.xlsx')
-    sind = studies.index(studyName)
+    rawDataPath = os.path.join(dataset_path,  'Study_' + studyName + '_1.xlsx') #
+    sind = studies.index(studyName) #c this is not needed, because the studies array is only numbers
     sp = splits[sind]
     data, arms = utils.Read_Excel(rawDataPath, ArmName = 'TRT01A', split = sp)
     filtered_Data = data.loc[data['TRLINKID'] == 'INV-T001']   #take only first tumor
     filtered_Data = filtered_Data.loc[filtered_Data['TRTESTCD'] == 'LDIAM'] #take only tumors for which measurement of longer diameter is available
     temp = list(filtered_Data['TRORRES'])  #this should be the measurements
-    temp = utils.Remove_String_From_Numeric_Vector(temp, valueToReplace = 0) #removes strings and replace by zero, why? do we only have strings when it disappears?
+    temp = utils.Remove_String_From_Numeric_Vector(temp, valueToReplace = 0) #removes strings and replace by zero, why? do we only have strings when it disappears? #c, I think this cause the list of 0
     maxList.append(max(temp)) #max value of measurement
     minList.append(min(temp))    #min value of measurement
                
@@ -77,10 +79,10 @@ studies = ['a', 'a', 'c', 'd', 'e']
 studies =['1', '2', '3', '4', '5']
 
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
-functions =['GeneralBertalanffy']
+functions =['GeneralBertalanffy'] #c, this s probably a test run
 splits = [True, True, False, True, True]
 noPars = [3, 3, 3, 4, 3, 4]
-noPars = [4, 3, 3, 4, 3, 4]
+noPars = [4, 3, 3, 4, 3, 4] #c, this is a 4 while the array above is a 3
 
 #studies=['1']
 #functions=['Exponential']
@@ -137,9 +139,9 @@ for studyName in studies:
                         time = utils.Correct_Time_Vector(time, convertToWeek = True)
         
                         # If the value of Dimension is nan or any other string value, we replace it with zero    
-                        dimension = utils.Remove_String_From_Numeric_Vector(dimension, valueToReplace = 0)
+                        dimension = utils.Remove_String_From_Numeric_Vector(dimension, valueToReplace = 0) #c, maybe cause of 0 list
                         
-                        dimension = [x for _,x in sorted(zip(time,dimension))]
+                        dimension = [x for _,x in sorted(zip(time,dimension))] #c there is a _ before the comma, assume that it will cause an error
                         dimension_copy = dimension.copy()
                         if normalizeDimension:
                             dimension_copy = dimension_copy/maxi
@@ -366,11 +368,11 @@ ax = sns.heatmap(tab_n, cmap=sns.color_palette("rocket", as_cmap=True), xticklab
 ax.set_xticklabels(labels = functions, rotation = 30,fontsize = 10 )
 plt.title('R-Squared values for each arms', fontsize = 20 )
 
-result
+result #c, a blank ass result in no where
 
 result.to_csv(dataset_path + 'narmin_rc.csv')
 
-"""#Mine"""
+"""#Mine""" #c, here start virgina code
 
 #pip install gekko
 
@@ -451,7 +453,7 @@ def split1_ind(min_val,med_val,max_val, scaled_pop0, trend0): #this is for deter
 def split_ind(min_val,max_val, scaled_pop0, trend0): #this is for determining a single element (so input is a single list corresponding to a tumor)
   size1=[]
   size2=[]
-  size3=[]
+  size3=[] #c, this one is not used
   size4=[]
   Inc=[]
   Dec=[]
@@ -589,7 +591,7 @@ for studyName in studies:
         for arm in arms:
             print(arm)  
                 
-            data_temp = data.loc[data['receivedTreatment'] == arm]    
+            data_temp = data.loc[data['receivedTreatment'] == arm]     #c, I find this weird
             patientID = list(data_temp['USUBJID'].unique())
             
             for key in patientID:
