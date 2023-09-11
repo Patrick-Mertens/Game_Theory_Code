@@ -1,5 +1,24 @@
 #This is the secontion of the code that has the header """#opt""" until optimize
 #In all honesty I have no clue yet what the function of this section is suppose dot be.
+import os 
+import warnings
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import seaborn as sns
+
+from sklearn.metrics import r2_score
+
+# copy dataset into working directory
+dataset_path = 'SpiderProject_KatherLab'
+
+from Utils import *
+from VG_Functions import *
+from FitFunctions import *
+
+import pickle
 
 """#opt"""
 
@@ -22,12 +41,12 @@ for studyName in studies:
     rawDataPath = os.path.join(dataset_path, 'Study_' + studyName + '_1.xlsx')
     sind = studies.index(studyName)
     sp = splits[sind]
-    data, arms = utils.Read_Excel(rawDataPath, ArmName='TRT01A', split=sp)
+    data, arms = Read_Excel(rawDataPath, ArmName='TRT01A', split=sp)
     filtered_Data = data.loc[data['TRLINKID'] == 'INV-T001']  # take only first tumor
     filtered_Data = filtered_Data.loc[
         filtered_Data['TRTESTCD'] == 'LDIAM']  # take only tumors for which measurement of longer diameter is available
     temp = list(filtered_Data['TRORRES'])  # this should be the measurements
-    temp = utils.Remove_String_From_Numeric_Vector(temp,
+    temp = Remove_String_From_Numeric_Vector(temp,
                                                    valueToReplace=0)  # removes strings and replace by zero, why? do we only have strings when it disappears?
     # tempo = transform_to_volume(temp)
     maxList.append(max(temp))  # max value of measurement
@@ -68,12 +87,12 @@ for studyName in studies:
 
     # rawDataPath = os.path.join(r"D:\Spider Project\rawData\new Files", studyName + '_m.xlsx')
     rawDataPath = os.path.join(dataset_path, 'Study_' + studyName + '_1.xlsx')
-    data, arms = utils.Read_Excel(rawDataPath, ArmName='TRT01A', split=sp)
+    data, arms = Read_Excel(rawDataPath, ArmName='TRT01A', split=sp)
     for functionToFit in functions:
 
         find = functions.index(functionToFit)
         noParameters = noPars[find]
-        result_dict = utils.Create_Result_dict(arms, ['Up', 'Down', 'Fluctuate', 'Evolution'],
+        result_dict = Create_Result_dict(arms, ['Up', 'Down', 'Fluctuate', 'Evolution'],
                                                categories=['patientID', 'rmse', 'rSquare',
                                                            'time', 'dimension', 'prediction', 'aic', 'params',
                                                            'cancer'])
@@ -108,10 +127,10 @@ for studyName in studies:
                         time = list(tumorFiltered_Data['TRDY'])
                         # time = list(tumorFiltered_Data['VISITDY'])
 
-                        time = utils.Correct_Time_Vector(time, convertToWeek=True)
+                        time = Correct_Time_Vector(time, convertToWeek=True)
 
                         # If the value of Dimension is nan or any other string value, we replace it with zero
-                        dimension = utils.Remove_String_From_Numeric_Vector(dimension, valueToReplace=0)
+                        dimension = Remove_String_From_Numeric_Vector(dimension, valueToReplace=0)
 
                         dimension = [x for _, x in sorted(zip(time, dimension))]
                         dimension_copy = dimension.copy()
@@ -119,7 +138,7 @@ for studyName in studies:
                             dimension_copy = dimension_copy / maxi
                             # dimension_copy = dimension_copy/np.max(dimension_copy)
 
-                        trend = utils.Detect_Trend_Of_Data(dimension_copy)
+                        trend = Detect_Trend_Of_Data(dimension_copy)
                         # trend ='Unique'
 
                         dimension = [i * i * i * 0.52 for i in dimension]
@@ -260,10 +279,10 @@ for studyName in studies:
                             continue
 
         # a_file = open(os.path.join(r"D:\Spider Project\Fit\080221", functionToFit, studyName + '.pkl'), "wb")
-        a_file = open(os.path.join(dataset_path + functionToFit, studyName + '.pkl'), "wb")
+        #a_file = open(os.path.join(dataset_path + functionToFit, studyName + '.pkl'), "wb")
 
-        pickle.dump(result_dict, a_file)
-        a_file.close()
+        #pickle.dump(result_dict, a_file)
+        #a_file.close()
 
 """#simulate"""
 
@@ -360,12 +379,12 @@ for studyName in studies:
     rawDataPath = os.path.join(dataset_path, 'Study_' + studyName + '_1.xlsx')
     sind = studies.index(studyName)
     sp = splits[sind]
-    data, arms = utils.Read_Excel(rawDataPath, ArmName='TRT01A', split=sp)
+    data, arms = Read_Excel(rawDataPath, ArmName='TRT01A', split=sp)
     filtered_Data = data.loc[data['TRLINKID'] == 'INV-T001']  # take only first tumor
     filtered_Data = filtered_Data.loc[
         filtered_Data['TRTESTCD'] == 'LDIAM']  # take only tumors for which measurement of longer diameter is available
     temp = list(filtered_Data['TRORRES'])  # this should be the measurements
-    temp = utils.Remove_String_From_Numeric_Vector(temp,
+    temp = Remove_String_From_Numeric_Vector(temp,
                                                    valueToReplace=0)  # removes strings and replace by zero, why? do we only have strings when it disappears?
     # tempo = transform_to_volume(temp)
     maxList.append(max(temp))  # max value of measurement
@@ -395,12 +414,12 @@ for studyName in studies:
 
     # rawDataPath = os.path.join(r"D:\Spider Project\rawData\new Files", studyName + '_m.xlsx')
     rawDataPath = os.path.join(dataset_path, 'Study_' + studyName + '_1.xlsx')
-    data, arms = utils.Read_Excel(rawDataPath, ArmName='TRT01A', split=sp)
+    data, arms = Read_Excel(rawDataPath, ArmName='TRT01A', split=sp)
     for functionToFit in functions:
 
         find = functions.index(functionToFit)
         noParameters = noPars[find]
-        result_dict = utils.Create_Result_dict(arms, ['Up', 'Down', 'Fluctuate'],
+        result_dict = Create_Result_dict(arms, ['Up', 'Down', 'Fluctuate'],
                                                categories=['patientID', 'rmse', 'rSquare',
                                                            'time', 'dimension', 'prediction', 'aic', 'params',
                                                            'cancer'])
@@ -433,10 +452,10 @@ for studyName in studies:
                         time = list(tumorFiltered_Data['TRDY'])
                         # time = list(tumorFiltered_Data['VISITDY'])
 
-                        time = utils.Correct_Time_Vector(time, convertToWeek=True)
+                        time = Correct_Time_Vector(time, convertToWeek=True)
 
                         # If the value of Dimension is nan or any other string value, we replace it with zero
-                        dimension = utils.Remove_String_From_Numeric_Vector(dimension, valueToReplace=0)
+                        dimension = Remove_String_From_Numeric_Vector(dimension, valueToReplace=0)
 
                         dimension = [x for _, x in sorted(zip(time, dimension))]
                         dimension_copy = dimension.copy()
@@ -444,7 +463,7 @@ for studyName in studies:
                             dimension_copy = dimension_copy / maxi
                             # dimension_copy = dimension_copy/np.max(dimension_copy)
 
-                        trend = utils.Detect_Trend_Of_Data(dimension_copy)
+                        trend = Detect_Trend_Of_Data(dimension_copy)
 
                         dimension = [i * i * i * 0.52 for i in dimension]
                         if normalizeDimension:
@@ -506,7 +525,7 @@ for studyName in studies:
                             temp_sum = np.sum(SE)
                             MSE = np.mean(SE)
 
-                            result_dict = utils.Write_On_Result_dict(result_dict, arm, trend,
+                            result_dict = Write_On_Result_dict(result_dict, arm, trend,
                                                                      categories=['patientID', 'time', 'dimension',
                                                                                  'prediction', 'rmse', 'rSquare', 'aic',
                                                                                  'params', 'cancer'],
@@ -521,11 +540,12 @@ for studyName in studies:
                             continue
 
         # a_file = open(os.path.join(r"D:\Spider Project\Fit\080221", functionToFit, studyName + '.pkl'), "wb")
-        a_file = open(os.path.join(dataset_path, functionToFit, studyName + '.pkl'), "wb")
+        #a_file = open(os.path.join(dataset_path, functionToFit, studyName + '.pkl'), "wb")
 
-        pickle.dump(result_dict, a_file)
-        a_file.close()
+        #pickle.dump(result_dict, a_file)
+        #a_file.close()
 
+"""
 Size1, Size2, Size4, Up, Down, Fluctuate = split1_ind(lim / 2, lim * 2, scaled_pop[i], list_trends[i])
 dimension = scaled_pop[i]
 time = scaled_days[i]
@@ -541,6 +561,7 @@ list_x1, list_u1, list_Kmax1, error1, list_b1, list_s1 = run_model_sim(days=time
                                                                        sigma_val=list_s, Kmax0=K0, a_val=list_Kmax,
                                                                        c_val=c0, m_val=1, g_val=g0)
 list_x
+"""
 
 ###############################################################################
 # Plot HeatMaps
@@ -552,7 +573,7 @@ for f in functions:
     indices = []
     for s in studies:
         # result_dict = pickle.load( open( r"D:\Spider Project\Fit\080221\\" + f + '\\' + s + ".pkl", "rb" ) )
-        result_dict = pickle.load(open(dataset_path + f + '/' + s + ".pkl", "rb"))
+        #result_dict = pickle.load(open(dataset_path + f + '/' + s + ".pkl", "rb"))
 
         arms = list(result_dict.keys())
         arms.sort()
@@ -567,14 +588,14 @@ result.dropna(inplace=True)
 minValuesObj = result.min(axis=1)
 
 tab_n = result.div(result.max(axis=1), axis=0)
-cmap = sns.cm.rocket
-mpl.rcParams['font.size'] = 10
-plt.rcParams["font.weight"] = "bold"
-plt.rcParams["axes.labelweight"] = "bold"
+#cmap = sns.cm.rocket
+#mpl.rcParams['font.size'] = 10
+#plt.rcParams["font.weight"] = "bold"
+#plt.rcParams["axes.labelweight"] = "bold"
 # plt.figure()
-plt.tight_layout()
+#plt.tight_layout()
 # t = tab_n.T
-ax = sns.heatmap(tab_n, cmap=sns.color_palette("rocket", as_cmap=True), xticklabels=True, yticklabels=True, square=True)
+#ax = sns.heatmap(tab_n, cmap=sns.color_palette("rocket", as_cmap=True), xticklabels=True, yticklabels=True, square=True)
 # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
-ax.set_xticklabels(labels=functions, rotation=30, fontsize=10)
-plt.title('R-Squared values for each arms', fontsize=20)
+#ax.set_xticklabels(labels=functions, rotation=30, fontsize=10)
+#plt.title('R-Squared values for each arms', fontsize=20)
