@@ -63,7 +63,7 @@ def split1_ind(min_val, med_val, max_val, scaled_pop0,
         size1.append(scaled_pop0)
     elif (scaled_pop0[0]) < med_val:
         size2.append(scaled_pop0)
-    elif (scaled_pop0[0]) < max_val:
+    elif (scaled_pop0[0]) < max_val: #C, I assume that this is not used in OPT.py, bcs size3 is not defined.
         size3.append(scaled_pop0)
     else:
         size4.append(scaled_pop0)
