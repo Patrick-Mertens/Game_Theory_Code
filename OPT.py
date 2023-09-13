@@ -158,33 +158,32 @@ for studyName in studies:
                         firstDim = dimension
                         firstTime = time
 
-                        try:
                             # if True:
-                            if not ('DOCETAXEL' in arm or 'Docetaxel' in arm):
-                                # Size1, Size2, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split_ind(lim/2, lim*2, dimension, trend)
-                                # Size1, Size2,Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim/lim0[sind], lim/2, lim*3, dimension, trend) #es lim*3
-                                Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(
-                                    lim / 20, lim / 2, lim * 3, dimension, trend)
-                                '''if sind ==0 or sind ==1 or sind ==4:
-                                  Size2= Size3 '''
+                        if not ('DOCETAXEL' in arm or 'Docetaxel' in arm):
+                            # Size1, Size2, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split_ind(lim/2, lim*2, dimension, trend)
+                            # Size1, Size2,Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim/lim0[sind], lim/2, lim*3, dimension, trend) #es lim*3
+                            Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(
+                                lim / 20, lim / 2, lim * 3, dimension, trend)
+                            '''if sind ==0 or sind ==1 or sind ==4:
+                              Size2= Size3 '''
 
-                                Fluctuate.extend(Evolution)  ##comment if 4 groupd
-                                k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size(studyName,
+                            Fluctuate.extend(Evolution)  ##comment if 4 groupd
+                            k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size(studyName,
                                                                                                     dimension, arm)
                                 # k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all(dimension)
 
-                                time1 = time + [time[-1] + 10, time[-1] + 20, time[-1] + 30, time[-1] + 40,
+                            time1 = time + [time[-1] + 10, time[-1] + 20, time[-1] + 30, time[-1] + 40,
                                                 time[-1] + 50]
                                 # time1=time
                                 # time1 = np.linspace(time[0], time[-1], 20, endpoint=True)
 
-                                list_x0, list_u0, list_Kmax0, error0, list_b0, list_s0, der0 = run_model_fixed(
+                            list_x0, list_u0, list_Kmax0, error0, list_b0, list_s0, der0 = run_model_fixed(
                                     days=time, population=firstDim, case=case0, k_val=k0, b_val=b0, u0_val=u0,
                                     sigma_val=sigma0, Kmax0=K0, a_val=a0, c_val=c0, free='k', g_val=g0)
                                 # what would have happened to docetaxel if they had been given immuno
                                 # k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0 = separate_by_size( studyName, dimension, 'Docetaxel')
 
-                                list_x, list_u, list_Kmax, error, list_b, list_s = run_model_sim(days=time1,
+                            list_x, list_u, list_Kmax, error, list_b, list_s = run_model_sim(days=time1,
                                                                                                  population=dimension,
                                                                                                  case=case0,
                                                                                                  k_val=list_b0,
@@ -198,7 +197,7 @@ for studyName in studies:
 
                                 # optimize
 
-                                list_x1, list_u1, list_Kmax1, error1, list_b1, list_s1, final = run_model_m(days=time1,
+                            list_x1, list_u1, list_Kmax1, error1, list_b1, list_s1, final = run_model_m(days=time1,
                                                                                                             population=dimension,
                                                                                                             case=case0,
                                                                                                             k_val=list_b0,
@@ -213,33 +212,33 @@ for studyName in studies:
                                                                                                             g_val=g0,
                                                                                                             obj='final')
 
-                                modelPredictions = list_x1
+                            modelPredictions = list_x1
                                 # print(modelPredictions)
                                 # print(dimension- list_x)
                                 # print('pred: ' + str(list_x))
-                                if True:
-                                    fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=(15, 5), constrained_layout=True)
+                            if True:
+                                fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=(15, 5), constrained_layout=True)
                                     # fig.suptitle("Patient " + str(i+1) + ", tumor: "+ str(j+1), fontsize=16)#+ ". Optimal values of m: "+ str(m_vals[count]))
-                                    ax0.plot(time1, np.array(list_Kmax1), label='m')
-                                    ax0.legend(fontsize=14)
-                                    ax0.set_xlabel("days from immunotherapy start", fontsize=16)
-                                    ax0.set_ylabel("value of m", fontsize=16)
-                                    ax1.scatter(time1, list_u, label='u with constant treatment', color='black',
+                                ax0.plot(time1, np.array(list_Kmax1), label='m')
+                                ax0.legend(fontsize=14)
+                                ax0.set_xlabel("days from immunotherapy start", fontsize=16)
+                                ax0.set_ylabel("value of m", fontsize=16)
+                                ax1.scatter(time1, list_u, label='u with constant treatment', color='black',
                                                 linestyle='dashed')
-                                    ax1.scatter(time1, list_u1, label='u with optimized treatment', color='red',
+                                ax1.scatter(time1, list_u1, label='u with optimized treatment', color='red',
                                                 linestyle='dashed')
-                                    ax1.set_xlabel("days from treatment start", fontsize=16)
-                                    ax1.set_ylabel("value of u", fontsize=16)
-                                    ax2.set_xlabel("days from treatment start", fontsize=16)
-                                    ax2.set_ylabel("volume of tumor", fontsize=16)
-                                    ax1.legend(fontsize=14)
-                                    ax2.plot(time1, list_x, label='x with constant treatment', color='black')
-                                    ax2.plot(time1, list_x1, label="x with optimized treatment", color='red')
-                                    ax2.legend(fontsize=14)
-                                    fig.savefig(dataset_path + "OptimizationD/" + str(key))
+                                ax1.set_xlabel("days from treatment start", fontsize=16)
+                                ax1.set_ylabel("value of u", fontsize=16)
+                                ax2.set_xlabel("days from treatment start", fontsize=16)
+                                ax2.set_ylabel("volume of tumor", fontsize=16)
+                                ax1.legend(fontsize=14)
+                                ax2.plot(time1, list_x, label='x with constant treatment', color='black')
+                                ax2.plot(time1, list_x1, label="x with optimized treatment", color='red')
+                                ax2.legend(fontsize=14)
+                                fig.savefig(dataset_path + "OptimizationD/" + str(key))
 
                                     ###
-                                    '''fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5), constrained_layout=True)
+                                '''fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5), constrained_layout=True)
                                     fig.suptitle("Exponential cost of resistance "  + arm, fontsize=12)
                                     ax1.scatter(time, list_u1, label='u', color='black', linestyle='dashed')
                                     ax1.legend( fontsize=12)
@@ -266,7 +265,7 @@ for studyName in studies:
                                 else:
                                     modelPredictions =  list_x'''
 
-                                modelPredictions = [0 if str(i) == 'nan' else i for i in modelPredictions]
+                            modelPredictions = [0 if str(i) == 'nan' else i for i in modelPredictions]
                             # absError = modelPredictions - dimension
                             # SE = np.square(absError)
                             # temp_sum = np.sum(SE)
@@ -275,8 +274,6 @@ for studyName in studies:
                             '''result_dict =  utils.Write_On_Result_dict(result_dict, arm, trend, categories = ['patientID','time', 'dimension', 'prediction', 'rmse', 'rSquare','aic', 'params', 'cancer'], 
                                                                               values = [key, time, dimension, modelPredictions, abs(dimension[-1]- modelPredictions[-1]),
                                                                                         r2_score(dimension, modelPredictions), (2 * noParameters) - (2 * np.log(temp_sum)), group, cn]) #need to put parameter  mean_absolute_error(dimension, modelPredictions),'''
-                        except:
-                            continue
 
         # a_file = open(os.path.join(r"D:\Spider Project\Fit\080221", functionToFit, studyName + '.pkl'), "wb")
         #a_file = open(os.path.join(dataset_path + functionToFit, studyName + '.pkl'), "wb")
