@@ -13,7 +13,7 @@ from scipy.optimize import curve_fit
 import sys
 import json
 
-#C, checking if this make open work
+#C, this package is needed
 import builtins
 
 #dataset_path = folder_path = "C:\\Users\\Shade\\Desktop\\Master\\Project Game Theory Code\\Downloaded file\\Edited\\SpiderProject_KatherLab"
