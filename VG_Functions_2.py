@@ -2,6 +2,9 @@
 
 from math import pi
 import statistics
+from gekko import GEKKO
+import math
+
 def transform_to_volume(list_diameters0):
   patient=[]
   for j in range(len(list_diameters0)):
@@ -133,8 +136,7 @@ def scale_data( list_pop0, max_diameter):
     scaled_pop.append(scaled)
   return scaled_pop
 
-  def Detect_Trend_Of_Data(vector): #C, this one gives an error
-
+  def Detect_Trend_Of_Data(vector):
     diff = []
     for d in range(len(vector) - 1):
       diff.append(vector[d + 1] - vector[
@@ -175,6 +177,9 @@ def scale_data( list_pop0, max_diameter):
     else:
         trend = 'Fluctuate'''
     return trend
+
+
+# i want that if it decreases at the beginning and then it increases more than  first point, it is evolved and if it increases
 
 def run_model_fixed(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, free, g_val=0.5):
   list_x =[]
@@ -312,3 +317,402 @@ def mse(x_true, x_pred,error):
   list_mse.append(mean_absolute_error(x_true, x_pred))
   #list_mse.append(r2_score(x_true, x_pred))
   return statistics.mean(list_mse)
+
+def get_error(group, response, k_val, b_val, case, u0_val, sigma_val, Kmax_val, a_val, c_val, g_val):
+  list_dict1=[]
+  bad=0
+  for i in range(len(scaled_pop)):
+      #for j in range(len(list_days[i])):
+        if (i) in group and (i) in response:
+          try:
+
+            D=gridsearch(days=scaled_days[i], pop= scaled_pop[i], model=run_model_fixed, k_vals=[ k_val],  b_vals=[b_val], cases=[ case],u0_vals=[u0_val], sigma_vals=[sigma_val], Kmax_vals=[Kmax_val], a_vals=[a_val], c_vals=[c_val], g_vals=[g_val])
+            list_dict1.append(D)
+          except:
+            list_dict1.append({'mse':1000, 'Kmax0':0, 'k_val' : 0, 'b_val':0, 'case': 0,  'u0_val':0, 'sigma_val': 0 })
+  good = 0
+  list_error=[]
+  for count in range(len(list_dict1)):
+    if (list_dict1[count]['mse'])<0.1:# and (list_dict[count]['k_val'])==0.1 and (list_dict[count]['b_val'])==0.02:
+      good +=1
+    if list_dict1[count]['mse'] != 1000:
+      list_error.append(list_dict1[count]['mse'])
+    else:
+      bad +=1
+
+
+  return good, statistics.mean(list_error), len(list_dict1)-good-bad
+
+def get_param(size, response):
+  errors=[]
+  Dict = {'mse':1000, 'k_val' : 0, 'b_val':0, 'case': 0, 'good':0 , 'u0_val': 0, 'K':0, 'a':0, 'c':0, 'g':0, 'sigma':0}
+  for k in [ 0.2, 0.9, 2,  1, 5]:
+    for b in [0.2,1, 2,10, 20]:
+      for case in [ 'exp_K']:
+        for u0 in [ 0.1]:
+          for sigma in [ 0]:
+            for K in [ 1, 2]:
+              for a_val in [1]:
+                for c_val in [   0.001, 0.01, 0.1, 0.2]:
+                  for g_val in [ 0.1, 0.5, 0.9]: #0.1, 0.5, 0.9
+                    results =(get_error(size, response, k, b, case,u0, sigma, K, a_val, c_val, g_val))
+                    #if results[0] >Dict['good'] or (results[0]== Dict['good'] and results[1]< Dict['mse']):
+                    if  results[1]< Dict['mse']:
+
+                      Dict['mse']= results[1]
+                      Dict['k_val']= k
+                      Dict['b_val'] = b
+                      Dict['case']= case
+                      Dict['good'] = results[0]
+                      Dict['u0_val'] = u0
+                      Dict['sigma']= sigma
+                      Dict['K'] = K
+                      Dict['a'] =a_val
+                      Dict['c'] =c_val
+                      Dict['g'] = g_val
+
+  return Dict['mse'], Dict['k_val'], Dict['b_val'], Dict['case'], Dict['u0_val'], Dict['sigma'], Dict['K'], Dict['a'], Dict['c'], Dict['g']
+
+def separate_by_size_predict_newdata4k_expK_all_m(tuple0): #free sigma for all dataset with MDA! 4 size groups
+  k0=0
+  b0=0
+  case0 ='c'
+  group='s'
+  K0=2
+  r =0
+  sigma=0
+  u0=0
+  a0=0
+  c0=0
+  K0=0
+  g0=0
+  if len(Size1) > 0 and tuple0 in Size1 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(9.602616255922462e-05, 2, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.5)
+
+
+
+    group='Size1, Inc'
+  elif len(Size1) > 0 and tuple0 in Size1 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(1.4924284769001023e-05, 1, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.1)
+
+
+
+  elif len(Size2) > 0 and tuple0 in Size2 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0005581028152651971, 2, 0.2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size2) > 0 and tuple0 in Size2 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0002474685799481297, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size3) > 0 and tuple0 in Size3 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0008712237364711401, 0.9, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size3) > 0 and tuple0 in Size3 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00045665782397184303, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.5)
+
+
+  elif len(Size4) > 0 and tuple0 in Size4 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.003805638444789154, 0.9, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+    group='Size3, Inc'
+  elif len(Size4) > 0 and tuple0 in Size4 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00583392900567394, 0.9, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.1)
+
+
+
+
+  return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
+
+
+def separate_by_size_predict_newdata4k_expK_all_m2(tuple0): #free sigma for all dataset with MDA! 4 size groups
+  k0=0
+  b0=0
+  case0 ='c'
+  group='s'
+  K0=2
+  r =0
+  sigma=0
+  u0=0
+  a0=0
+  c0=0
+  K0=0
+  g0=0
+  if len(Size1) > 0 and tuple0 in Size1 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(4.9007374519872045e-05, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.5)
+
+
+
+    group='Size1, Inc'
+  elif len(Size1) > 0 and tuple0 in Size1 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(6.46287476594794e-06, 2, 10, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+
+
+  elif len(Size2) > 0 and tuple0 in Size2 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.000208892569995844, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+    group='Size2, Inc'
+  elif len(Size2) > 0 and tuple0 in Size2 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(2.4680954119098068e-05, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.1)
+
+
+  elif len(Size3) > 0 and tuple0 in Size3 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0008186625558637999, 1, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size3) > 0 and tuple0 in Size3 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0003065002240221485, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.5)
+
+
+  elif len(Size4) > 0 and tuple0 in Size4 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0020903478069908797, 1, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.5)
+
+
+    group='Size3, Inc'
+  elif len(Size4) > 0 and tuple0 in Size4 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0017453868791226252, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+
+
+
+  return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
+
+
+def separate_by_size_predict_newdata4k_expK_all_d(tuple0): #free sigma for all dataset with docetaxel! 4 size groups
+  k0=0
+  b0=0
+  case0 ='c'
+  group='s'
+  K0=2
+  r =0
+  sigma=0
+  u0=0
+  a0=0
+  c0=0
+  K0=0
+  g0=0
+  if len(Size1) > 0 and tuple0 in Size1 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(8.4973845374143e-05, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+    group='Size1, Inc'
+  elif len(Size1) > 0 and tuple0 in Size1 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(1.001913325901334e-05, 0.2, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size2) > 0 and tuple0 in Size2 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(8.629359474403977e-05, 1, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size2) > 0 and tuple0 in Size2 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(6.240565937342348e-05, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size3) > 0 and tuple0 in Size3 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0005069629697468392, 2, 10, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.9)
+
+    group='Size2, Inc'
+  elif len(Size3) > 0 and tuple0 in Size3 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00028086457826024576, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.1)
+
+
+  elif len(Size4) > 0 and tuple0 in Size4 and tuple0 in Inc:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.003322438544321211, 1, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+    group='Size3, Inc'
+  elif len(Size4) > 0 and tuple0 in Size4 and tuple0 in Dec:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0024268534223027454, 0.9, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+
+  return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
+
+
+def separate_by_size(study, pop, arm):
+  if arm == 'DOCETAXEL' or arm == 'docetaxel':
+    k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_d(pop)
+  elif arm == 'MPDL3280A':
+    k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_m(pop)
+  else:
+    k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_m2(pop)
+
+
+  return k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0
+
+def PR_separate_by_size(study, arm, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec):
+  if arm == 'DOCETAXEL' or arm == 'docetaxel':
+    k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_predict_newdata4k_expK_all_d(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
+  elif arm == 'MPDL3280A':
+    k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_predict_newdata4k_expK_all_m(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
+  else:
+    k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_predict_newdata4k_expK_all_m2(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
+
+  return k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0
+
+def PR_separate_by_size_predict_newdata4k_expK_all_d(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec): #free sigma for all dataset with docetaxel! 4 size groups
+  k0=0
+  b0=0
+  case0 ='c'
+  group='s'
+  K0=2
+  r =0
+  sigma=0
+  u0=0
+  a0=0
+  c0=0
+  K0=0
+  g0=0
+  if len(Size1) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(8.4973845374143e-05, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+    group='Size1, Inc'
+  elif len(Size1) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(1.001913325901334e-05, 0.2, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size2) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(8.629359474403977e-05, 1, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size2) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(6.240565937342348e-05, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size3) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0005069629697468392, 2, 10, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.9)
+
+    group='Size2, Inc'
+  elif len(Size3) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00028086457826024576, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.1)
+
+
+  elif len(Size4) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.003322438544321211, 1, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+    group='Size3, Inc'
+  elif len(Size4) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0024268534223027454, 0.9, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+
+  return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
+
+def PR_separate_by_size_predict_newdata4k_expK_all_m(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec): #free sigma for all dataset with MDA! 4 size groups
+  k0=0
+  b0=0
+  case0 ='c'
+  group='s'
+  K0=2
+  r =0
+  sigma=0
+  u0=0
+  a0=0
+  c0=0
+  K0=0
+  g0=0
+  if len(Size1) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(9.602616255922462e-05, 2, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.5)
+
+
+
+    group='Size1, Inc'
+  elif len(Size1) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(1.4924284769001023e-05, 1, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.1)
+
+
+
+  elif len(Size2) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0005581028152651971, 2, 0.2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size2) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0002474685799481297, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size3) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0008712237364711401, 0.9, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size3) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00045665782397184303, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.5)
+
+
+  elif len(Size4) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.003805638444789154, 0.9, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+    group='Size3, Inc'
+  elif len(Size4) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00583392900567394, 0.9, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.1)
+
+
+
+
+  return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
+
+def PR_separate_by_size_predict_newdata4k_expK_all_m2(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec): #free sigma for all dataset with MDA! 4 size groups
+  k0=0
+  b0=0
+  case0 ='c'
+  group='s'
+  K0=2
+  r =0
+  sigma=0
+  u0=0
+  a0=0
+  c0=0
+  K0=0
+  g0=0
+  if len(Size1) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(4.9007374519872045e-05, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.5)
+
+
+
+    group='Size1, Inc'
+  elif len(Size1) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(6.46287476594794e-06, 2, 10, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+
+
+  elif len(Size2) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.000208892569995844, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+    group='Size2, Inc'
+  elif len(Size2) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(2.4680954119098068e-05, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.1)
+
+
+  elif len(Size3) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0008186625558637999, 1, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size3) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0003065002240221485, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.5)
+
+
+  elif len(Size4) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0020903478069908797, 1, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.5)
+
+
+    group='Size3, Inc'
+  elif len(Size4) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0017453868791226252, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+
+
+
+  return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
