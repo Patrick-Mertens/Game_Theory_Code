@@ -17,6 +17,7 @@ import matplotlib as mpl
 from matplotlib.lines import Line2D
 import sys
 import builtins
+import csv
 
 #Importing the local functions
 from VG_Functions_2 import *
@@ -24,6 +25,7 @@ from VG_Functions_2 import *
 #Set dataset_path, on folder back where the pickle files are located
 dataset_path = r"C:\Users\Shade\Desktop\Master\Project Game Theory Code\Downloaded file\Edited\SpiderProject_KatherLab"  # Use a raw string for the path
 sys.path.insert(0,dataset_path)
+paramControl = "Control_20_09_2023_attempt_6" #C, to many patients
 
 
 #Initial settings
@@ -157,6 +159,8 @@ for studyName in studies:
                         list_study.append(studyName)
                         list_patients.append(key)
 
+                        print(f" 1 list_patients: {len(list_patients)}")
+
                         '''
                         try:
                              modelPredictions = fitfunc(time, *fittedParameters)
@@ -246,13 +250,17 @@ for i in range(len(list_trends)):
 
 
 filtered =[]
+
+#Debugging
+print(f" 2 list_patients: {len(list_patients)}")
 for i in Size2:
   filtered.append(list_patients[i])
 print(len(set(filtered)))
 
 print(len(set(list_patients)))
 
-print(len(list_patients))
+print(len(list_patients)) #C, I need to print this
+print(f" 3 list_patients: {len(list_patients)}")
 
 list_3a=[]
 list_b=[]
@@ -389,7 +397,7 @@ for studyName in studies:
                         time.sort()
                         cn =   list(tumorFiltered_Data['TULOC']) [0]
 
-                    try:
+                    try: #C, this try box need to move to the left, so that it is in the body of the
                         Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim / 20,
                                                                                                           lim / 2,
                                                                                                           lim * 3,
@@ -494,6 +502,59 @@ for studyName in studies:
                         temp_sum = np.sum(SE)
                         MSE = np.mean(SE)
 
+                        #Saving Params
+
+                        # Ensure the directory exists, if not, create it
+                        directory_parm = os.path.join(dataset_path, functionToFit, paramControl, f"{studyName}") #C, I have to many patients so let me determine which one is used
+                        if not os.path.exists(directory_parm):
+                            os.makedirs(directory_parm)
+
+                        # Create the CSV file path for this patient
+                        # Create the CSV file path for this patient
+                        csv_file_path = os.path.join(directory_parm, f"{key}.csv")
+
+                        # Find the max length among all variables to extend them
+                        max_len = 0
+                        # Calculate max length to extend arrays to this size
+                        all_variables = [key, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec, lim,
+                                         list_Kmax, list_u[0], list_s, absError, SE, temp_sum, MSE]
+
+                        for var in all_variables:
+                            try:
+                                if isinstance(var, (list,np.ndarray)):
+                                    max_len = max(max_len, len(var))
+                                elif isinstance(var, (int, float, np.float64, str)):
+                                    max_len = max(max_len, 1)
+                                else:
+                                    print(f"Error: Unrecognized type {type(var)} for variable {var}")
+                            except Exception as e:
+                                print(f"Exception while calculating length for variable {var}: {e}")
+
+                        # Extend all arrays to max_length
+                        extended_variables = []
+                        for var in all_variables:
+                            try:
+                                extended_var = extend_to_length(var, max_len)
+                                extended_variables.append(extended_var)
+                            except Exception as e:
+                                print(f"Exception while extending variable {var}: {e}")
+                                extended_variables.append([var] * max_len)  # Default action
+
+                        # Write to the CSV file
+                        with open(csv_file_path, 'w', newline='') as csvfile:
+                            csvwriter = csv.writer(csvfile)
+
+                            # Writing the header
+                            headers = ["PatientID","Size1", "Size2", "Size3", "Size4", "Up", "Down", "Fluctuate", "Evolution",
+                                       "Inc", "Dec", "lim", "list_Kmax(r_values)", "list_u[0](u_values)",
+                                       "list_s(sigma values)", "absError", "SE", "temp_sum", "MSE"]
+                            csvwriter.writerow(headers)
+
+                            # Writing the data
+                            for i in range(max_len):
+                                row = [extended_variables[j][i] for j in range(len(extended_variables))]
+                                csvwriter.writerow(row)
+
                         result_dict = utils.Write_On_Result_dict(result_dict, arm, trend,
                                                                  categories=['patientID', 'time', 'dimension',
                                                                              'prediction', 'rmse', 'rSquare', 'aic',
@@ -511,6 +572,7 @@ for studyName in studies:
         #Debugging,
         print(f"functionToFit: {functionToFit}")
         print(f"result_dict: {result_dict}")
+        print(f"list: {list_b}")
 
 
         # Properly join paths and check if directory exists

@@ -4,6 +4,7 @@ from math import pi
 import statistics
 from gekko import GEKKO
 import math
+import numpy as np
 
 def transform_to_volume(list_diameters0):
   patient=[]
@@ -716,3 +717,18 @@ def PR_separate_by_size_predict_newdata4k_expK_all_m2(Size1, Size2, Size3, Size4
 
 
   return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
+
+# Extend variables to match the maximum length, filling in None for missing values
+#Self made function
+#Function to extend list to a given length with "Placeholder"
+def extend_to_length(var, max_length):
+  if isinstance(var, list):
+    return var + ["Placeholder"] * (max_length - len(var))
+  elif isinstance(var, np.ndarray):
+    placeholder_array = np.array(["Placeholder"] * (max_length - len(var)))
+    return np.concatenate([var, placeholder_array])
+  elif isinstance(var, (int, float, np.float64, str)):
+    return [var] * max_length
+  else:
+    print(f"Error: Unrecognized type {type(var)} for variable {var}")
+    return [var] * max_length  # Default action
