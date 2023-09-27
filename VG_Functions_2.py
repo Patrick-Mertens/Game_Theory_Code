@@ -137,7 +137,7 @@ def scale_data( list_pop0, max_diameter):
     scaled_pop.append(scaled)
   return scaled_pop
 
-  def Detect_Trend_Of_Data(vector):
+def Detect_Trend_Of_Data(vector):
     diff = []
     for d in range(len(vector) - 1):
       diff.append(vector[d + 1] - vector[
@@ -549,10 +549,13 @@ def separate_by_size(study, pop, arm):
   return k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0
 
 def PR_separate_by_size(study, arm, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec):
+  #C, Docetaxel is a chemotherapy medicine
   if arm == 'DOCETAXEL' or arm == 'docetaxel':
     k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_predict_newdata4k_expK_all_d(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
+  #C, MPDL3280A_ also know as Atezolizumab, is immunotherapy
   elif arm == 'MPDL3280A':
     k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_predict_newdata4k_expK_all_m(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
+  #C, others?
   else:
     k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_predict_newdata4k_expK_all_m2(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
 
@@ -732,3 +735,125 @@ def extend_to_length(var, max_length):
   else:
     print(f"Error: Unrecognized type {type(var)} for variable {var}")
     return [var] * max_length  # Default action
+
+def PR_get_error(group, response, k_val, b_val, case, u0_val, sigma_val, Kmax_val, a_val, c_val, g_val,scaled_pop, scaled_days):
+
+    list_dict1 = []
+    bad = 0
+    for i in range(len(scaled_pop)):
+      # for j in range(len(list_days[i])):
+      if (i) in group and (i) in response:
+        try:
+
+          D = gridsearch(days=scaled_days[i], pop=scaled_pop[i], model=run_model_fixed, k_vals=[k_val], b_vals=[b_val],
+                         cases=[case], u0_vals=[u0_val], sigma_vals=[sigma_val], Kmax_vals=[Kmax_val], a_vals=[a_val],
+                         c_vals=[c_val], g_vals=[g_val])
+          list_dict1.append(D)
+        except:
+          print(f"Except statement in, PR_get_error, for i: {i}")
+          list_dict1.append({'mse': 1000, 'Kmax0': 0, 'k_val': 0, 'b_val': 0, 'case': 0, 'u0_val': 0, 'sigma_val': 0})
+    good = 0
+    list_error = []
+    for count in range(len(list_dict1)):
+      if (list_dict1[count]['mse']) < 0.1:  # and (list_dict[count]['k_val'])==0.1 and (list_dict[count]['b_val'])==0.02:
+        good += 1
+      if list_dict1[count]['mse'] != 1000:
+        list_error.append(list_dict1[count]['mse'])
+      else:
+        bad += 1
+    return good, statistics.mean(list_error), len(list_dict1) - good - bad #C, this is the old one but mean give an error, so I removed it
+    #return good, list_error, len(list_dict1) - good - bad
+
+def PR_get_param(size, response, scaled_pop, scaled_days):
+    errors = []
+    Dict = {'mse': 1000, 'k_val': 0, 'b_val': 0, 'case': 0, 'good': 0, 'u0_val': 0, 'K': 0, 'a': 0, 'c': 0, 'g': 0,
+            'sigma': 0}
+    for k in [0.2, 0.9, 2, 1, 5]:
+      for b in [0.2, 1, 2, 10, 20]:
+        for case in ['exp_K']:
+          for u0 in [0.1]:
+            for sigma in [0]:
+              for K in [1, 2]:
+                for a_val in [1]:
+                  for c_val in [0.001, 0.01, 0.1, 0.2]:
+                    for g_val in [0.1, 0.5, 0.9]:  # 0.1, 0.5, 0.9
+                      results = (PR_get_error(size, response, k, b, case, u0, sigma, K, a_val, c_val, g_val, scaled_pop, scaled_days))
+                      # if results[0] >Dict['good'] or (results[0]== Dict['good'] and results[1]< Dict['mse']):
+                      if results[1] < Dict['mse']:
+                        Dict['mse'] = results[1]
+                        Dict['k_val'] = k
+                        Dict['b_val'] = b
+                        Dict['case'] = case
+                        Dict['good'] = results[0]
+                        Dict['u0_val'] = u0
+                        Dict['sigma'] = sigma
+                        Dict['K'] = K
+                        Dict['a'] = a_val
+                        Dict['c'] = c_val
+                        Dict['g'] = g_val
+
+    return Dict['mse'], Dict['k_val'], Dict['b_val'], Dict['case'], Dict['u0_val'], Dict['sigma'], Dict['K'], Dict['a'], \
+    Dict['c'], Dict['g']
+
+
+def PR_get_error_2(group, response, k_val, b_val, case, u0_val, sigma_val, Kmax_val, a_val, c_val, g_val,
+                 scaled_pop, scaled_days, other_Group):
+  list_dict1 = []
+  bad = 0
+  for i in range(len(scaled_pop)):
+    # for j in range(len(list_days[i])):
+    if (i) in group and (i) in response and (i) in other_Group:
+      try:
+
+        D = gridsearch(days=scaled_days[i], pop=scaled_pop[i], model=run_model_fixed, k_vals=[k_val], b_vals=[b_val],
+                       cases=[case], u0_vals=[u0_val], sigma_vals=[sigma_val], Kmax_vals=[Kmax_val], a_vals=[a_val],
+                       c_vals=[c_val], g_vals=[g_val])
+        list_dict1.append(D)
+      except:
+        print(f"Except statement in, PR_get_error, for i: {i}")
+        list_dict1.append({'mse': 1000, 'Kmax0': 0, 'k_val': 0, 'b_val': 0, 'case': 0, 'u0_val': 0, 'sigma_val': 0})
+  good = 0
+  list_error = []
+  for count in range(len(list_dict1)):
+    if (list_dict1[count]['mse']) < 0.1:  # and (list_dict[count]['k_val'])==0.1 and (list_dict[count]['b_val'])==0.02:
+      good += 1
+    if list_dict1[count]['mse'] != 1000:
+      list_error.append(list_dict1[count]['mse'])
+    else:
+      bad += 1
+  # return good, statistics.mean(list_error), len(list_dict1) - good - bad #C, this is the old one but mean give an error, so I removed it
+  print(list_error)
+  return good, list_error, len(list_dict1) - good - bad
+
+
+def PR_get_param_2(size, response, scaled_pop, scaled_days, other_Group):
+  errors = []
+  Dict = {'mse': 1000, 'k_val': 0, 'b_val': 0, 'case': 0, 'good': 0, 'u0_val': 0, 'K': 0, 'a': 0, 'c': 0, 'g': 0,
+          'sigma': 0}
+  for k in [0.2, 0.9, 2, 1, 5]:
+    for b in [0.2, 1, 2, 10, 20]:
+      for case in ['exp_K']:
+        for u0 in [0.1]:
+          for sigma in [0]:
+            for K in [1, 2]:
+              for a_val in [1]:
+                for c_val in [0.001, 0.01, 0.1, 0.2]:
+                  for g_val in [0.1, 0.5, 0.9]:  # 0.1, 0.5, 0.9
+                    results = (PR_get_error_2(size, response, k, b, case, u0, sigma, K, a_val, c_val, g_val, scaled_pop, scaled_days, other_Group))
+                    # if results[0] >Dict['good'] or (results[0]== Dict['good'] and results[1]< Dict['mse']):
+                    print(f"results[1]:{results[1]}, result: {results}, type:{type(results[1])}")
+                    if results[1] < Dict['mse']:
+                      Dict['mse'] = results[1]
+                      Dict['k_val'] = k
+                      Dict['b_val'] = b
+                      Dict['case'] = case
+                      Dict['good'] = results[0]
+                      Dict['u0_val'] = u0
+                      Dict['sigma'] = sigma
+                      Dict['K'] = K
+                      Dict['a'] = a_val
+                      Dict['c'] = c_val
+                      Dict['g'] = g_val
+
+  return Dict['mse'], Dict['k_val'], Dict['b_val'], Dict['case'], Dict['u0_val'], Dict['sigma'], Dict['K'], Dict['a'], \
+    Dict['c'], Dict['g']
