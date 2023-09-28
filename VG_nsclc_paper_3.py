@@ -25,7 +25,7 @@ from VG_Functions_2 import *
 #Set dataset_path, on folder back where the pickle files are located
 dataset_path = r"C:\Users\Shade\Desktop\Master\Project Game Theory Code\Downloaded file\Edited\SpiderProject_KatherLab"  # Use a raw string for the path
 sys.path.insert(0,dataset_path)
-paramControl = "Control_20_09_2023_attempt_6" #C, to many patients
+paramControl = "Control_20_09_2023_attempt_8_redrawing" #C, to many patients
 
 
 #Initial settings
@@ -397,178 +397,390 @@ for studyName in studies:
                         time.sort()
                         cn =   list(tumorFiltered_Data['TULOC']) [0]
 
-                    try: #C, this try box need to move to the left, so that it is in the body of the
-                        Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim / 20,
-                                                                                                          lim / 2,
-                                                                                                          lim * 3,
-                                                                                                          dimension,
-                                                                                                          trend)
-                        # Debug print statements
-                        print(f"Size1: {Size1}, type off: {type(Size1)}, Lenght: {len(Size1)}")
-                        print(f"Size2: {Size2}, type off: {type(Size2)}, Lenght:  {len(Size2)}")
-                        print(f"Size3: {Size3}, type off: {type(Size3)}, Lenght:  {len(Size3)}")
-                        print(f"Size4: {Size4}, type off: {type(Size4)}, Lenght:  {len(Size4)}")
-                        print(f"Inc: {Inc}, type off: {type(Inc)}, Lenght: {len(Inc)}")
-                        print(f"Dec: {Dec}, type off: {type(Dec)}, Lenght:  {len(Dec)}")
+                        try:  # C, this try box need to move to the left, so that it is in the body of the
+                            Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim / 20,
+                                                                                                              lim / 2,
+                                                                                                              lim * 3,
+                                                                                                              dimension,
+                                                                                                              trend)
+                            # Debug print statements
+                            print(f"Size1: {Size1}, type off: {type(Size1)}, Lenght: {len(Size1)}")
+                            print(f"Size2: {Size2}, type off: {type(Size2)}, Lenght:  {len(Size2)}")
+                            print(f"Size3: {Size3}, type off: {type(Size3)}, Lenght:  {len(Size3)}")
+                            print(f"Size4: {Size4}, type off: {type(Size4)}, Lenght:  {len(Size4)}")
+                            print(f"Inc: {Inc}, type off: {type(Inc)}, Lenght: {len(Inc)}")
+                            print(f"Dec: {Dec}, type off: {type(Dec)}, Lenght:  {len(Dec)}")
 
-                        # #C, currently their are sometimes empty array for that patient, and this make the code crash
-                        # # Check and insert 2 into each empty Size array
-                        # if len(Size1) == 0:
-                        #     Size1.append(2)
-                        # if len(Size2) == 0:
-                        #     Size2.append(2)
-                        # if len(Size3) == 0:
-                        #     Size3.append(2)
-                        # if len(Size4) == 0:
-                        #     Size4.append(2)
+                            # #C, currently their are sometimes empty array for that patient, and this make the code crash
+                            # # Check and insert 2 into each empty Size array
+                            # if len(Size1) == 0:
+                            #     Size1.append(2)
+                            # if len(Size2) == 0:
+                            #     Size2.append(2)
+                            # if len(Size3) == 0:
+                            #     Size3.append(2)
+                            # if len(Size4) == 0:
+                            #     Size4.append(2)
 
+                            # Debug print statements
+                            print(f"Size1: {Size1}, type off: {type(Size1)}, Lenght: {len(Size1)}")
+                            print(f"Size2: {Size2}, type off: {type(Size2)}, Lenght:  {len(Size2)}")
+                            print(f"Size3: {Size3}, type off: {type(Size3)}, Lenght:  {len(Size3)}")
+                            print(f"Size4: {Size4}, type off: {type(Size4)}, Lenght:  {len(Size4)}")
+                            print(f"Inc: {Inc}, type off: {type(Inc)}, Lenght: {len(Inc)}")
+                            print(f"Dec: {Dec}, type off: {type(Dec)}, Lenght:  {len(Dec)}")
+                            print(f"dimension: {dimension}")
 
-                        # Debug print statements
-                        print(f"Size1: {Size1}, type off: {type(Size1)}, Lenght: {len(Size1)}")
-                        print(f"Size2: {Size2}, type off: {type(Size2)}, Lenght:  {len(Size2)}")
-                        print(f"Size3: {Size3}, type off: {type(Size3)}, Lenght:  {len(Size3)}")
-                        print(f"Size4: {Size4}, type off: {type(Size4)}, Lenght:  {len(Size4)}")
-                        print(f"Inc: {Inc}, type off: {type(Inc)}, Lenght: {len(Inc)}")
-                        print(f"Dec: {Dec}, type off: {type(Dec)}, Lenght:  {len(Dec)}")
-                        print(f"dimension: {dimension}")
+                            Fluctuate.extend(Evolution)
+                            # C, commented the below line trying to do something new to fix it
+                            # k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size(studyName, dimension, arm)
 
-                        Fluctuate.extend(Evolution)
-                        #C, commented the below line trying to do something new to fix it
-                        #k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size(studyName, dimension, arm)
+                            # C, made a new seprate by size to try to work around empty list size
+                            k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size(studyName, arm,
+                                                                                                   Size1, Size2, Size3,
+                                                                                                   Size4, Up, Down,
+                                                                                                   Fluctuate, Evolution,
+                                                                                                   Inc, Dec)
+                            print(f"separate_by_size is runned")
+                            list_x, list_u, list_Kmax, error, list_b, list_s, der = run_model_fixed(days=time,
+                                                                                                    population=dimension,
+                                                                                                    case=case0,
+                                                                                                    k_val=k0,
+                                                                                                    b_val=b0, u0_val=u0,
+                                                                                                    sigma_val=sigma0,
+                                                                                                    Kmax0=K0, a_val=a0,
+                                                                                                    c_val=c0,
+                                                                                                    free='sigma',
+                                                                                                    g_val=g0)
 
-                        #C, made a new seprate by size to try to work around empty list size
-                        k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size(studyName, arm, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
-                        print(f"separate_by_size is runned")
-                        list_x, list_u, list_Kmax, error, list_b, list_s, der = run_model_fixed(days=time,
-                                                                                                population=dimension,
-                                                                                                case=case0, k_val=k0,
-                                                                                                b_val=b0, u0_val=u0,
-                                                                                                sigma_val=sigma0,
-                                                                                                Kmax0=K0, a_val=a0,
-                                                                                                c_val=c0, free='sigma',
-                                                                                                g_val=g0)
+                            initial_x.append(dimension[0])
+                            if len(Inc) == 1:
+                                initial_trend.append(1)
+                            else:
+                                initial_trend.append(0)
 
-                        initial_x.append(dimension[0])
-                        if len(Inc) == 1:
-                            initial_trend.append(1)
-                        else:
-                            initial_trend.append(0)
+                            r_values.append(list_Kmax)
+                            u_values.append(list_u[0])
+                            sigma_values.append(list_s)
 
-                        r_values.append(list_Kmax)
-                        u_values.append(list_u[0])
-                        sigma_values.append(list_s)
+                            if list_x[-1] > list_x[0]:
+                                target.append(0)
+                            else:
+                                target.append(1)
 
-                        if list_x[-1] > list_x[0]:
-                            target.append(0)
-                        else:
-                            target.append(1)
-
-                        modelPredictions = list_x
-
-                        if trend == 'Evolution':
-                            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
-                            fig.suptitle("Exponential cost of resistance " + arm, fontsize=12)
-                            ax1.scatter(time, list_u, label='u', color='black', linestyle='dashed')
-                            ax1.legend(fontsize=12)
-
-                            # ax1.set_title( " sigma=" +str(round(list_s, 0))  + " b= " + str(b0) + " K= " + str(K0) +", u0: " + str(round(list_u[0],3))+ " r: " + str(round(list_Kmax,3)))# + "m: " + str(list_Kmax1))
-                            # ax2.set_title("m: " + str(list_Kmax1))
-                            ax2.plot(time, dimension, label="real measurements", color='red')
-                            ax2.plot(time, list_x, label='model predictions', color='blue')
-                            ax2.legend(fontsize=12)
-                            ax1.set_xlabel("days from treatment start", fontsize=12)
-                            ax1.set_ylabel("value of u", fontsize=12)
-                            ax2.set_xlabel("days from treatment start", fontsize=12)
-                            ax2.set_ylabel("volume of tumor", fontsize=12)
-                            # Create the folder if it doesn't exist.
-                            save_path = os.path.join(dataset_path, "Sigma 0", functionToFit)
-                            if not os.path.exists(save_path):
-                                os.makedirs(save_path)
-
-                            # Save the figure
-                            fig.savefig(os.path.join(save_path, str(key)))
-                            #C, modifyed this line, therefore this is commented
-                            #fig.savefig(dataset_path + "Sigma 0/" + functionToFit + str(key))
-
-                        if len(set(dimension)) == 1:
-                            modelPredictions = dimension
-                        else:
                             modelPredictions = list_x
 
-                        modelPredictions = [0 if str(i) == 'nan' else i for i in modelPredictions]
+                            if trend == 'Evolution':
+                                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
+                                fig.suptitle("Exponential cost of resistance " + arm, fontsize=15)
 
-                        absError = modelPredictions - dimension
-                        SE = np.square(absError)
-                        temp_sum = np.sum(SE)
-                        MSE = np.mean(SE)
+                                # Change scatter plot to gray line for ax1
+                                ax1.plot(time, list_u, label='u', color='gray')
+                                ax1.legend(fontsize=15)
 
-                        #Saving Params
+                                # For ax2, use scatter for red crosses and plot for blue line
+                                ax2.scatter(time, dimension, label="real measurements", color='red',
+                                            marker='x')  # red crosses
+                                ax2.plot(time, list_x, label='model predictions', color='blue')  # blue line
+                                ax2.legend(fontsize=15)
 
-                        # Ensure the directory exists, if not, create it
-                        directory_parm = os.path.join(dataset_path, functionToFit, paramControl, f"{studyName}") #C, I have to many patients so let me determine which one is used
-                        if not os.path.exists(directory_parm):
-                            os.makedirs(directory_parm)
+                                ax1.set_xlabel("days from treatment start", fontsize=15)
+                                ax1.set_ylabel("value of u", fontsize=15)
+                                ax2.set_xlabel("days from treatment start", fontsize=15)
+                                ax2.set_ylabel("volume of tumor", fontsize=15)
 
-                        # Create the CSV file path for this patient
-                        # Create the CSV file path for this patient
-                        csv_file_path = os.path.join(directory_parm, f"{key}.csv")
+                                # Create the folder if it doesn't exist.
+                                save_path = os.path.join(dataset_path, "Sigma 0", functionToFit,
+                                                         f"{arm}")  # added arm to it
+                                if not os.path.exists(save_path):
+                                    os.makedirs(save_path)
 
-                        # Find the max length among all variables to extend them
-                        max_len = 0
-                        # Calculate max length to extend arrays to this size
-                        all_variables = [key, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec, lim,
-                                         list_Kmax, list_u[0], list_s, absError, SE, temp_sum, MSE]
+                                # Save the figure
+                                fig.savefig(os.path.join(save_path, str(key)))
 
-                        for var in all_variables:
-                            try:
-                                if isinstance(var, (list,np.ndarray)):
-                                    max_len = max(max_len, len(var))
-                                elif isinstance(var, (int, float, np.float64, str)):
-                                    max_len = max(max_len, 1)
-                                else:
-                                    print(f"Error: Unrecognized type {type(var)} for variable {var}")
-                            except Exception as e:
-                                print(f"Exception while calculating length for variable {var}: {e}")
 
-                        # Extend all arrays to max_length
-                        extended_variables = []
-                        for var in all_variables:
-                            try:
-                                extended_var = extend_to_length(var, max_len)
-                                extended_variables.append(extended_var)
-                            except Exception as e:
-                                print(f"Exception while extending variable {var}: {e}")
-                                extended_variables.append([var] * max_len)  # Default action
 
-                        # Write to the CSV file
-                        with open(csv_file_path, 'w', newline='') as csvfile:
-                            csvwriter = csv.writer(csvfile)
+                                ##C, Old plot function
+                                # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
+                                # fig.suptitle("Exponential cost of resistance " + arm, fontsize=12)
+                                # ax1.scatter(time, list_u, label='u', color='black', linestyle='dashed')
+                                # ax1.legend(fontsize=12)
+                                #
+                                # # ax1.set_title( " sigma=" +str(round(list_s, 0))  + " b= " + str(b0) + " K= " + str(K0) +", u0: " + str(round(list_u[0],3))+ " r: " + str(round(list_Kmax,3)))# + "m: " + str(list_Kmax1))
+                                # # ax2.set_title("m: " + str(list_Kmax1))
+                                # ax2.plot(time, dimension, label="real measurements", color='red')
+                                # ax2.plot(time, list_x, label='model predictions', color='blue')
+                                # ax2.legend(fontsize=12)
+                                # ax1.set_xlabel("days from treatment start", fontsize=12)
+                                # ax1.set_ylabel("value of u", fontsize=12)
+                                # ax2.set_xlabel("days from treatment start", fontsize=12)
+                                # ax2.set_ylabel("volume of tumor", fontsize=12)
+                                # # Create the folder if it doesn't exist.
+                                # save_path = os.path.join(dataset_path, "Sigma 0", functionToFit, f"{arm}") #added arm to it
+                                # if not os.path.exists(save_path):
+                                #     os.makedirs(save_path)
+                                #
+                                # # Save the figure
+                                # fig.savefig(os.path.join(save_path, str(key)))
+                                # # C, modifyed this line, therefore this is commented
+                                # # fig.savefig(dataset_path + "Sigma 0/" + functionToFit + str(key))
 
-                            # Writing the header
-                            headers = ["PatientID","Size1", "Size2", "Size3", "Size4", "Up", "Down", "Fluctuate", "Evolution",
-                                       "Inc", "Dec", "lim", "list_Kmax(r_values)", "list_u[0](u_values)",
-                                       "list_s(sigma values)", "absError", "SE", "temp_sum", "MSE"]
-                            csvwriter.writerow(headers)
+                            if len(set(dimension)) == 1:
+                                modelPredictions = dimension
+                            else:
+                                modelPredictions = list_x
 
-                            # Writing the data
-                            for i in range(max_len):
-                                row = [extended_variables[j][i] for j in range(len(extended_variables))]
-                                csvwriter.writerow(row)
+                            modelPredictions = [0 if str(i) == 'nan' else i for i in modelPredictions]
 
-                        result_dict = utils.Write_On_Result_dict(result_dict, arm, trend,
-                                                                 categories=['patientID', 'time', 'dimension',
-                                                                             'prediction', 'rmse', 'rSquare', 'aic',
-                                                                             'params', 'cancer'],
-                                                                 values=[key, time, dimension, modelPredictions,
-                                                                         mean_squared_error(dimension,
-                                                                                            modelPredictions),
-                                                                         r2_score(dimension, modelPredictions),
-                                                                         (2 * noParameters) - (2 * np.log(temp_sum)),
-                                                                         group, cn])
+                            absError = modelPredictions - dimension
+                            SE = np.square(absError)
+                            temp_sum = np.sum(SE)
+                            MSE = np.mean(SE)
 
-                    except Exception as e:
-                        print(f"An error occurred for patient {key} and arm {arm}: {e}")
-                        continue
+                            # Saving Params
+
+                            # Ensure the directory exists, if not, create it
+                            directory_parm = os.path.join(dataset_path, functionToFit, paramControl,
+                                                          f"{studyName}")  # C, I have to many patients so let me determine which one is used
+                            if not os.path.exists(directory_parm):
+                                os.makedirs(directory_parm)
+
+                            # Create the CSV file path for this patient
+                            # Create the CSV file path for this patient
+                            csv_file_path = os.path.join(directory_parm, f"{key}.csv")
+
+                            # Find the max length among all variables to extend them
+                            max_len = 0
+                            # Calculate max length to extend arrays to this size
+                            all_variables = [key, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec,
+                                             lim,
+                                             list_Kmax, list_u[0], list_s, absError, SE, temp_sum, MSE]
+
+                            for var in all_variables:
+                                try:
+                                    if isinstance(var, (list, np.ndarray)):
+                                        max_len = max(max_len, len(var))
+                                    elif isinstance(var, (int, float, np.float64, str)):
+                                        max_len = max(max_len, 1)
+                                    else:
+                                        print(f"Error: Unrecognized type {type(var)} for variable {var}")
+                                except Exception as e:
+                                    print(f"Exception while calculating length for variable {var}: {e}")
+
+                            # Extend all arrays to max_length
+                            extended_variables = []
+                            for var in all_variables:
+                                try:
+                                    extended_var = extend_to_length(var, max_len)
+                                    extended_variables.append(extended_var)
+                                except Exception as e:
+                                    print(f"Exception while extending variable {var}: {e}")
+                                    extended_variables.append([var] * max_len)  # Default action
+
+                            # Write to the CSV file
+                            with open(csv_file_path, 'w', newline='') as csvfile:
+                                csvwriter = csv.writer(csvfile)
+
+                                # Writing the header
+                                headers = ["PatientID", "Size1", "Size2", "Size3", "Size4", "Up", "Down", "Fluctuate",
+                                           "Evolution",
+                                           "Inc", "Dec", "lim", "list_Kmax(r_values)", "list_u[0](u_values)",
+                                           "list_s(sigma values)", "absError", "SE", "temp_sum", "MSE"]
+                                csvwriter.writerow(headers)
+
+                                # Writing the data
+                                for i in range(max_len):
+                                    row = [extended_variables[j][i] for j in range(len(extended_variables))]
+                                    csvwriter.writerow(row)
+
+                            result_dict = utils.Write_On_Result_dict(result_dict, arm, trend,
+                                                                     categories=['patientID', 'time', 'dimension',
+                                                                                 'prediction', 'rmse', 'rSquare', 'aic',
+                                                                                 'params', 'cancer'],
+                                                                     values=[key, time, dimension, modelPredictions,
+                                                                             mean_squared_error(dimension,
+                                                                                                modelPredictions),
+                                                                             r2_score(dimension, modelPredictions),
+                                                                             (2 * noParameters) - (
+                                                                                         2 * np.log(temp_sum)),
+                                                                             group, cn])
+
+                        except Exception as e:
+                            print(f"An error occurred for patient {key} and arm {arm}: {e}")
+                            continue
+
+                    # try: #C, this try box need to move to the left, so that it is in the body of the
+                    #     Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim / 20,
+                    #                                                                                       lim / 2,
+                    #                                                                                       lim * 3,
+                    #                                                                                       dimension,
+                    #                                                                                       trend)
+                    #     # Debug print statements
+                    #     print(f"Size1: {Size1}, type off: {type(Size1)}, Lenght: {len(Size1)}")
+                    #     print(f"Size2: {Size2}, type off: {type(Size2)}, Lenght:  {len(Size2)}")
+                    #     print(f"Size3: {Size3}, type off: {type(Size3)}, Lenght:  {len(Size3)}")
+                    #     print(f"Size4: {Size4}, type off: {type(Size4)}, Lenght:  {len(Size4)}")
+                    #     print(f"Inc: {Inc}, type off: {type(Inc)}, Lenght: {len(Inc)}")
+                    #     print(f"Dec: {Dec}, type off: {type(Dec)}, Lenght:  {len(Dec)}")
+                    #
+                    #     # #C, currently their are sometimes empty array for that patient, and this make the code crash
+                    #     # # Check and insert 2 into each empty Size array
+                    #     # if len(Size1) == 0:
+                    #     #     Size1.append(2)
+                    #     # if len(Size2) == 0:
+                    #     #     Size2.append(2)
+                    #     # if len(Size3) == 0:
+                    #     #     Size3.append(2)
+                    #     # if len(Size4) == 0:
+                    #     #     Size4.append(2)
+                    #
+                    #
+                    #     # Debug print statements
+                    #     print(f"Size1: {Size1}, type off: {type(Size1)}, Lenght: {len(Size1)}")
+                    #     print(f"Size2: {Size2}, type off: {type(Size2)}, Lenght:  {len(Size2)}")
+                    #     print(f"Size3: {Size3}, type off: {type(Size3)}, Lenght:  {len(Size3)}")
+                    #     print(f"Size4: {Size4}, type off: {type(Size4)}, Lenght:  {len(Size4)}")
+                    #     print(f"Inc: {Inc}, type off: {type(Inc)}, Lenght: {len(Inc)}")
+                    #     print(f"Dec: {Dec}, type off: {type(Dec)}, Lenght:  {len(Dec)}")
+                    #     print(f"dimension: {dimension}")
+                    #
+                    #     Fluctuate.extend(Evolution)
+                    #     #C, commented the below line trying to do something new to fix it
+                    #     #k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size(studyName, dimension, arm)
+                    #
+                    #     #C, made a new seprate by size to try to work around empty list size
+                    #     k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size(studyName, arm, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
+                    #     print(f"separate_by_size is runned")
+                    #     list_x, list_u, list_Kmax, error, list_b, list_s, der = run_model_fixed(days=time,
+                    #                                                                             population=dimension,
+                    #                                                                             case=case0, k_val=k0,
+                    #                                                                             b_val=b0, u0_val=u0,
+                    #                                                                             sigma_val=sigma0,
+                    #                                                                             Kmax0=K0, a_val=a0,
+                    #                                                                             c_val=c0, free='sigma',
+                    #                                                                             g_val=g0)
+                    #
+                    #     initial_x.append(dimension[0])
+                    #     if len(Inc) == 1:
+                    #         initial_trend.append(1)
+                    #     else:
+                    #         initial_trend.append(0)
+                    #
+                    #     r_values.append(list_Kmax)
+                    #     u_values.append(list_u[0])
+                    #     sigma_values.append(list_s)
+                    #
+                    #     if list_x[-1] > list_x[0]:
+                    #         target.append(0)
+                    #     else:
+                    #         target.append(1)
+                    #
+                    #     modelPredictions = list_x
+                    #
+                    #     if trend == 'Evolution':
+                    #         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
+                    #         fig.suptitle("Exponential cost of resistance " + arm, fontsize=12)
+                    #         ax1.scatter(time, list_u, label='u', color='black', linestyle='dashed')
+                    #         ax1.legend(fontsize=12)
+                    #
+                    #         # ax1.set_title( " sigma=" +str(round(list_s, 0))  + " b= " + str(b0) + " K= " + str(K0) +", u0: " + str(round(list_u[0],3))+ " r: " + str(round(list_Kmax,3)))# + "m: " + str(list_Kmax1))
+                    #         # ax2.set_title("m: " + str(list_Kmax1))
+                    #         ax2.plot(time, dimension, label="real measurements", color='red')
+                    #         ax2.plot(time, list_x, label='model predictions', color='blue')
+                    #         ax2.legend(fontsize=12)
+                    #         ax1.set_xlabel("days from treatment start", fontsize=12)
+                    #         ax1.set_ylabel("value of u", fontsize=12)
+                    #         ax2.set_xlabel("days from treatment start", fontsize=12)
+                    #         ax2.set_ylabel("volume of tumor", fontsize=12)
+                    #         # Create the folder if it doesn't exist.
+                    #         save_path = os.path.join(dataset_path, "Sigma 0", functionToFit)
+                    #         if not os.path.exists(save_path):
+                    #             os.makedirs(save_path)
+                    #
+                    #         # Save the figure
+                    #         fig.savefig(os.path.join(save_path, str(key)))
+                    #         #C, modifyed this line, therefore this is commented
+                    #         #fig.savefig(dataset_path + "Sigma 0/" + functionToFit + str(key))
+                    #
+                    #     if len(set(dimension)) == 1:
+                    #         modelPredictions = dimension
+                    #     else:
+                    #         modelPredictions = list_x
+                    #
+                    #     modelPredictions = [0 if str(i) == 'nan' else i for i in modelPredictions]
+                    #
+                    #     absError = modelPredictions - dimension
+                    #     SE = np.square(absError)
+                    #     temp_sum = np.sum(SE)
+                    #     MSE = np.mean(SE)
+                    #
+                    #     #Saving Params
+                    #
+                    #     # Ensure the directory exists, if not, create it
+                    #     directory_parm = os.path.join(dataset_path, functionToFit, paramControl, f"{studyName}") #C, I have to many patients so let me determine which one is used
+                    #     if not os.path.exists(directory_parm):
+                    #         os.makedirs(directory_parm)
+                    #
+                    #     # Create the CSV file path for this patient
+                    #     # Create the CSV file path for this patient
+                    #     csv_file_path = os.path.join(directory_parm, f"{key}.csv")
+                    #
+                    #     # Find the max length among all variables to extend them
+                    #     max_len = 0
+                    #     # Calculate max length to extend arrays to this size
+                    #     all_variables = [key, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec, lim,
+                    #                      list_Kmax, list_u[0], list_s, absError, SE, temp_sum, MSE]
+                    #
+                    #     for var in all_variables:
+                    #         try:
+                    #             if isinstance(var, (list,np.ndarray)):
+                    #                 max_len = max(max_len, len(var))
+                    #             elif isinstance(var, (int, float, np.float64, str)):
+                    #                 max_len = max(max_len, 1)
+                    #             else:
+                    #                 print(f"Error: Unrecognized type {type(var)} for variable {var}")
+                    #         except Exception as e:
+                    #             print(f"Exception while calculating length for variable {var}: {e}")
+                    #
+                    #     # Extend all arrays to max_length
+                    #     extended_variables = []
+                    #     for var in all_variables:
+                    #         try:
+                    #             extended_var = extend_to_length(var, max_len)
+                    #             extended_variables.append(extended_var)
+                    #         except Exception as e:
+                    #             print(f"Exception while extending variable {var}: {e}")
+                    #             extended_variables.append([var] * max_len)  # Default action
+                    #
+                    #     # Write to the CSV file
+                    #     with open(csv_file_path, 'w', newline='') as csvfile:
+                    #         csvwriter = csv.writer(csvfile)
+                    #
+                    #         # Writing the header
+                    #         headers = ["PatientID","Size1", "Size2", "Size3", "Size4", "Up", "Down", "Fluctuate", "Evolution",
+                    #                    "Inc", "Dec", "lim", "list_Kmax(r_values)", "list_u[0](u_values)",
+                    #                    "list_s(sigma values)", "absError", "SE", "temp_sum", "MSE"]
+                    #         csvwriter.writerow(headers)
+                    #
+                    #         # Writing the data
+                    #         for i in range(max_len):
+                    #             row = [extended_variables[j][i] for j in range(len(extended_variables))]
+                    #             csvwriter.writerow(row)
+                    #
+                    #     result_dict = utils.Write_On_Result_dict(result_dict, arm, trend,
+                    #                                              categories=['patientID', 'time', 'dimension',
+                    #                                                          'prediction', 'rmse', 'rSquare', 'aic',
+                    #                                                          'params', 'cancer'],
+                    #                                              values=[key, time, dimension, modelPredictions,
+                    #                                                      mean_squared_error(dimension,
+                    #                                                                         modelPredictions),
+                    #                                                      r2_score(dimension, modelPredictions),
+                    #                                                      (2 * noParameters) - (2 * np.log(temp_sum)),
+                    #                                                      group, cn])
+                    #
+                    # except Exception as e:
+                    #     print(f"An error occurred for patient {key} and arm {arm}: {e}")
+                    #     continue
         #Debugging,
         print(f"functionToFit: {functionToFit}")
         print(f"result_dict: {result_dict}")

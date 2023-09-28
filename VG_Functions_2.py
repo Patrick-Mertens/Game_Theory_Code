@@ -5,6 +5,7 @@ import statistics
 from gekko import GEKKO
 import math
 import numpy as np
+from datetime import datetime
 
 def transform_to_volume(list_diameters0):
   patient=[]
@@ -354,7 +355,7 @@ def get_param(size, response):
           for sigma in [ 0]:
             for K in [ 1, 2]:
               for a_val in [1]:
-                for c_val in [   0.001, 0.01, 0.1, 0.2]:
+                for c_val in [   0.001, 0.01, 0.1, 0.2]: #C, this coresponds to d value in table 2
                   for g_val in [ 0.1, 0.5, 0.9]: #0.1, 0.5, 0.9
                     results =(get_error(size, response, k, b, case,u0, sigma, K, a_val, c_val, g_val))
                     #if results[0] >Dict['good'] or (results[0]== Dict['good'] and results[1]< Dict['mse']):
@@ -857,3 +858,210 @@ def PR_get_param_2(size, response, scaled_pop, scaled_days, other_Group):
 
   return Dict['mse'], Dict['k_val'], Dict['b_val'], Dict['case'], Dict['u0_val'], Dict['sigma'], Dict['K'], Dict['a'], \
     Dict['c'], Dict['g']
+
+
+def PR_get_error_Fixed(group, response, k_val, b_val, case, u0_val, sigma_val, Kmax_val, a_val, c_val, g_val,
+                 scaled_pop, scaled_days, patient_list, Control):
+  list_dict1 = []
+  bad = 0
+  for i in range(len(scaled_pop)):
+    # for j in range(len(list_days[i])):
+    if (i) in group and (i) in response:
+      try:
+
+        D = gridsearch_Fixed(days=scaled_days[i], pop=scaled_pop[i], model=run_model_fixed_fixed, k_vals=[k_val], b_vals=[b_val],
+                             cases=[case], u0_vals=[u0_val], sigma_vals=[sigma_val], Kmax_vals=[Kmax_val], a_vals=[a_val],
+                             c_vals=[c_val], g_vals=[g_val], ID=patient_list[i], Check=Control)
+        list_dict1.append(D)
+      except:
+        print(f"Except statement in, PR_get_error, for i: {i}")
+        list_dict1.append({'mse': 1000, 'Kmax0': 0, 'k_val': 0, 'b_val': 0, 'case': 0, 'u0_val': 0, 'sigma_val': 0})
+  good = 0
+  list_error = []
+  for count in range(len(list_dict1)):
+    if (list_dict1[count]['mse']) < 0.1:  # and (list_dict[count]['k_val'])==0.1 and (list_dict[count]['b_val'])==0.02:
+      good += 1
+    if list_dict1[count]['mse'] != 1000:
+      list_error.append(list_dict1[count]['mse'])
+    else:
+      bad += 1
+  # return good, statistics.mean(list_error), len(list_dict1) - good - bad #C, this is the old one but mean give an error, so I removed it
+  print(list_error)
+  return good, list_error, len(list_dict1) - good - bad
+
+
+def PR_get_param_Fixed(size, response, scaled_pop, scaled_days, patient_list, Control):
+  errors = []
+  Dict = {'mse': 1000, 'k_val': 0, 'b_val': 0, 'case': 0, 'good': 0, 'u0_val': 0, 'K': 0, 'a': 0, 'c': 0, 'g': 0,
+          'sigma': 0}
+  for k in [0.2, 0.9, 2, 1, 5]:
+    for b in [0.2, 1, 2, 10, 20]:
+      for case in ['exp_K']:
+        for u0 in [0.1]:
+          for sigma in [0]:
+            for K in [1, 2]:
+              for a_val in [1]:
+                for c_val in [0.001, 0.01, 0.1, 0.2]:
+                  for g_val in [0.1, 0.5, 0.9]:  # 0.1, 0.5, 0.9
+                    results = (PR_get_error_Fixed(size, response, k, b, case, u0, sigma, K, a_val, c_val, g_val, scaled_pop, scaled_days, patient_list, Control))
+                    # if results[0] >Dict['good'] or (results[0]== Dict['good'] and results[1]< Dict['mse']):
+                    print(f"results[1]:{results[1]}, result: {results}, type:{type(results[1])}")
+                    if results[1] < Dict['mse']:
+                      Dict['mse'] = results[1]
+                      Dict['k_val'] = k
+                      Dict['b_val'] = b
+                      Dict['case'] = case
+                      Dict['good'] = results[0]
+                      Dict['u0_val'] = u0
+                      Dict['sigma'] = sigma
+                      Dict['K'] = K
+                      Dict['a'] = a_val
+                      Dict['c'] = c_val
+                      Dict['g'] = g_val
+
+  return Dict['mse'], Dict['k_val'], Dict['b_val'], Dict['case'], Dict['u0_val'], Dict['sigma'], Dict['K'], Dict['a'], \
+    Dict['c'], Dict['g']
+
+
+def gridsearch_Fixed(days, pop, model, k_vals,  b_vals, cases,u0_vals, sigma_vals, Kmax_vals, a_vals, c_vals, g_vals,ID, Check):
+  list_mse=[]
+  mse0=10000000
+  #mse0=0
+
+  Dict = {'mse':10000000, 'Kmax0':0, 'k_val' : 0, 'b_val':0, 'case': 0,  'u0_val':0, 'a_val':0, 'c_val':0, 'g_val':0 }
+  for k_val in k_vals:
+    Check = 0
+    for Kmax_val in Kmax_vals:
+      Check = 0
+      for a_val in a_vals:
+        Check = 0
+        for c_val in c_vals:
+          Check = 0
+          for b_val in b_vals:
+            Check = 0
+            for case in cases:
+              Check = 0
+              for u0_val in u0_vals:
+                Check = 0
+                for sigma_val in sigma_vals:
+                  Check = 0
+                  for g_val in g_vals:
+                    list_x, list_u, list_Kmax, error, list_b, list_s ,der = model(days, pop, case, k_val, b_val, u0_val, sigma_val, Kmax_val, a_val, c_val, 'sigma', g_val, ID, Check)
+                    if mse(pop, list_x, error)==float(mse(pop, list_x, error)) and mse(pop, list_x, error) < mse0:
+                    #if mse(pop, list_x, error)==float(mse(pop, list_x, error)) and mse(pop, list_x, error) > mse0:
+
+                      mse0= mse(pop, list_x, error)
+                      Dict['mse']= mse0
+                      Dict['k_val']= k_val
+                      Dict['Kmax0']= Kmax_val
+                      Dict['b_val'] = b_val
+                      Dict['case']= case
+                      Dict['u0_val'] = u0_val
+                      Dict['sigma_val']= sigma_val
+                      Dict['a_val']=a_val
+                      Dict['c_val']=c_val
+                      Dict['g_val']= g_val
+                    list_mse.append(mse(pop, list_x, error))
+  return Dict
+
+def run_model_fixed_fixed(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, free, ID,Check, g_val=0.5):
+  list_x =[]
+  list_u =[]
+  list_Kmax =[]
+  list_b =[]
+  error=[]
+  der=[]
+  list_s=[]
+  #try:
+  m = GEKKO(remote=False)
+  m.time= days
+  x_data= population
+  x = m.CV(value=x_data, lb=0); x.FSTATUS = 1 # fit to measurement
+  x.SPLO = 0
+  if free =='sigma':
+    #sigma= m.Param(0)
+    sigma = m.FV(value=0.01, lb= 0, ub=0.1); sigma.STATUS=1
+    #sigma = m.FV(value=0.01, lb= 0, ub=1); sigma.STATUS=1
+
+    k = m.Param(k_val)
+  elif free== 'k':
+    sigma= m.Param(0)
+    k = m.Param(k_val)
+
+    #k = m.FV(value=0.1, lb= 0, ub=10); k.STATUS=1
+  d = m.Param(c_val)
+  b = m.Param(b_val)
+  #g_val = m.FV(value=0.5, lb= 0); g_val.STATUS=1
+
+
+  r = m.FV(value=0.4, lb=c_val, ub=1); r.STATUS=1 #, ub=a_val  #estaba en 0.01 y lb= 0.00001
+  #r = m.FV(value=c_val, lb=c_val, ub=1); r.STATUS=1 #, ub=a_val  #estaba en 0.01 y lb= 0.00001
+
+  #r = m.FV(value=0.01, lb=0.00001, ub=1); r.STATUS=1 #, ub=a_val  #estaba en 0.01 y lb= 0.00001
+
+  step = [0 if z<0 else 1 for z in m.time]
+  m_param = m.Param(1)
+  u = m.Var(value=u0_val, lb=0)#, ub=1)
+  m.free(u)
+  a = m.Param(a_val)
+  c= m.Param(c_val)
+  Kmax= m.Param(Kmax0)
+  if case == 'case3':
+    m.Equations([x.dt()==  (x)*(r*(1-u)*(1-x/Kmax)-m_param/(k+b*u)-d), u.dt()==sigma*(b*m_param/((b*u+k)**2)-r*(1-x/(Kmax)))])
+  elif case == 'case0':
+    m.Equations([x.dt()==  x*(r*(1-x/(Kmax))-m_param/(k+b*u)-d), u.dt()== sigma*(m_param*b/((k+b*u)**2))])
+  elif case == 'case4':
+    m.Equations([x.dt()==  x*(r*(1-u**2)*(1-x/(Kmax))-m_param/(k+b*u)-d), u.dt() == sigma*(-2*u*r*(1-x/(Kmax))+(b*m_param)/(b*u+k)**2)])
+  elif case == 'case5':
+    m.Equations([x.dt()==  x*(r*(1+u**2)*(1-x/(Kmax))-m_param/(k+b*u)-d), u.dt() == sigma*(2*u*r*(1-x/(Kmax))+(b*m_param)/(b*u+k)**2)])
+  elif case == 'exp_r':
+    #u unbounded for this one
+    m.Equations([x.dt()==  x*(r*(m.exp(-g_val*u))*(1-x/(Kmax))-m_param/(k+b*u)-d), u.dt() == sigma*(-g_val*r*(1-x/(Kmax))*(m.exp(-g_val*u))+(b*m_param)/(b*u+k)**2)])
+  elif case == 'exp_K':
+    #u unbounded for this one
+    m.Equations([x.dt()==  x*(r*(1-x/(Kmax*(m.exp(-g_val*u))))-m_param/(k+b*u)-d), u.dt() == sigma*((-g_val*r*x*(m.exp(g_val*u)))/(Kmax)+(b*m_param)/(b*u+k)**2)])
+  elif case == 'exp_K_benefit':
+    #u unbounded for this one
+    m.Equations([x.dt()==  x*(r*(1-x/(Kmax*(m.exp(g_val*u))))-m_param/(k+b*u)-d), u.dt() == sigma*((g_val*r*x*(m.exp(g_val*u)))/(Kmax)+(b*m_param)/(b*u+k)**2)])
+
+  elif case == 'exp_both':
+    m.Equations([x.dt()==  x*(r*(m.exp(-g_val*u))*(1-x/(Kmax*(m.exp(-g_val*u))))-m_param/(k+b*u)-d), u.dt() == sigma*(-g_val*r*(m.exp(-g_val*u))*(1-x*(m.exp(g_val*u))/(Kmax))+(b*m_param)/((b*u+k)**2)-g_val*r*x/(Kmax))])
+  elif case == 'exp':
+    m.Equations([x.dt()==  x*(r*(1-u)*(1-x/(Kmax*(m.exp(-g_val*u))))-m_param/(k+b*u)-d), u.dt() == sigma*(-r*(1-(x*m.exp(g_val*u))/Kmax)-(g_val*r*x*(1-u)*m.exp(g_val*u))/Kmax+(b*m)/(b*u+k)**2)])
+  elif case == 'exp_K_neg':
+    #u unbounded for this one
+    m.Equations([x.dt()==  x*(r*(1-x/(Kmax*(m.exp(-g_val*u))))-m_param/(k+b*u)-d), u.dt() == -sigma*((-g_val*r*x*(m.exp(g_val*u)))/(Kmax)+(b*m_param)/(b*u+k)**2)])
+
+  m.options.IMODE = 5  # dynamic estimation
+  m.options.NODES = 5   # collocation nodes
+  m.options.EV_TYPE = 2 # linear error (2 for squared)
+  #m.options.MAX_ITER=15000
+
+  m.solve(disp=False, debug=False)    # do not display solver output
+  list_x =x.value
+  list_u= u.value
+  der = Kmax.value[0]
+  list_Kmax= r.value[0]
+  list_b = k.value[0]
+  list_s = sigma.value[0]
+  '''except:
+  list_x =0
+  list_u= 0
+  der = 0
+  list_Kmax= 0
+  list_b = 0
+  list_s = 0'''
+
+  ##Getting stuff
+  formatted_time = datetime.current_local_time.strftime("%Y-%m-%d %H:%M:%S")
+
+  #Check statement
+  Check = Check + 1
+
+  ####Print Functions
+  print(f"\n--------- RUN_MODEL_FIXED_FIXED-------------------")
+  print(f"PatientID: {ID}")
+  print(f"Time: {formatted_time}")
+  print(f"Check: {Check}")
+
+  return list_x, list_u, list_Kmax, error, list_b, list_s, der

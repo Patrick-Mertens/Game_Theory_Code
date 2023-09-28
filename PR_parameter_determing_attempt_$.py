@@ -204,6 +204,12 @@ for studyName in studies:
 lim = limit(scaled_pop)
 # Size1, Size2, Size4, Inc, Dec = split1(lim/2, lim*2, scaled_pop)
 Size1, Size2, Size3, Size4, Inc, Dec = split1(lim / 20, lim / 2, lim * 3, scaled_pop)  # C, I think these need to be saved
+# Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim / 20,
+#                                                                                   lim / 2,
+#                                                                                   lim * 3,
+#                                                                                   dimension,
+#                                                                                   trend)
+
 
 ########################################################################
 list_d=[]

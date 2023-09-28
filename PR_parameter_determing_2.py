@@ -16,8 +16,13 @@ import sys
 import builtins
 import csv
 
+
 #Importing the local functions
 from VG_Functions_2 import *
+
+#Attempting something
+from itertools import combinations
+from datetime import datetime
 
 #Set dataset_path, on folder back where the pickle files are located
 dataset_path = r"C:\Users\Shade\Desktop\Master\Project Game Theory Code\Downloaded file\Edited\SpiderProject_KatherLab"  # Use a raw string for the path
@@ -68,7 +73,7 @@ list_study=[]
 list_patients=[]
 studies = ['a', 'a', 'c', 'd', 'e']
 studies =['1', '2', '3', '4']
-#studies=['3']
+#studies=['3'] #C, uncommeted to see what happens
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
 functions =['Exponential']
 splits = [True, True, False, True, True]
@@ -222,7 +227,7 @@ for i in range(len(list_arms)):
 Inc=[]
 Dec=[]
 for i in range(len(scaled_pop)):
-  if i in list_m:
+  if i in list_d: #changed this from list_m to list_d
     if scaled_pop[i][0]> scaled_pop[i][1]:
       Dec.append((i))
     else:
@@ -250,10 +255,27 @@ filtered =[]
 
 #Debugging
 print(f" 2 list_patients: {len(list_patients)}")
-for i in Size2:
+for i in Size1:
   filtered.append(list_patients[i])
 print(len(set(filtered)))
+print(f"Size1: {filtered}")
 
+filtered2 = []
+
+for i in Inc:
+  filtered2.append(list_patients[i])
+print(len(set(filtered2)))
+print(f"Inc: {filtered2}")
+
+filtered3 = []
+
+for i in list_d:
+  filtered3.append(list_patients[i])
+print(len(set(filtered3)))
+print(f"List_d: {filtered3}")
+
+print(f"lenght of list arms: {len(list_arms)}")
+print(f"lenght of list_d: {len(list_d)}")
 print(len(set(list_patients)))
 
 print(len(list_patients)) #C, I need to print this
@@ -398,13 +420,156 @@ print(Size4)
 print(f"Total Count: {len(Size4)}")
 print(f"Type: {type(Size4)}")
 
+#Common index beteween size1, Inc
+print(f"\n--- Size1 Inc ---")
+common_index = {370, 359, 335}
+print(f"common_index as Checkin union: {common_index}")
+
+
+for i in common_index:
+    print(f"for {i} in list_patients: {list_patients[i]}")
+
+
+# Convert the lists to sets
+Size1_set = set(Size1)
+Inc_set = set(Inc)
+list_d_set = set(list_d)
+
+# Find the common numbers
+common_Size1_Inc = Size1_set.intersection(Inc_set)
+common_Size1_list_d = Size1_set.intersection(list_d_set)
+common_Inc_list_d = Inc_set.intersection(list_d_set)
+common_all_three = Size1_set.intersection(Inc_set, list_d_set)
+
+# Print the common numbers
+print("Common between Size1 and Inc:", common_Size1_Inc)
+print("Common between Size1 and list_d:", common_Size1_list_d)
+print("Common between Inc and list_d:", common_Inc_list_d)
+print("Common between all three lists:", common_all_three)
+
+
+for i in common_all_three:
+    print(f"for {i} in list_patients and in {common_all_three}: {list_patients[i]}")
 print("\n=== END OF DEBUGGING INFORMATION ===\n")
+
+#all patients
+# Call the get_param function and store the result
+result = PR_get_param(Size1, Inc, scaled_pop,scaled_days) #Modified function, added scaled_pop to it
+
+print(f"result 1, Size1 Inc: {result}")
+
+
+####Attempting to determine parameter for Size1, increase List_d by removing one and than adding one
+common_indexes = {370, 359, 335} #C, determined with Checking_union.py
+
+
+#Debug funciton
+def debug_function(a, b, c, d):
+    print("Modified Size1:", a)
+    print("Type of Modified Size1:", type(a))
+    print("Length of Modified Size1:", len(a))
+    print("--------------------------")
+
+    print("Modified Inc:", b)
+    print("Type of Modified Inc:", type(b))
+    print("Length of Modified Inc:", len(b))
+    print("--------------------------")
+
+    print("Modified scaled_pop:", c)
+    print("Type of Modified scaled_pop:", type(c))
+    print("Length of Modified scaled_pop:", len(c))
+    for i, array in enumerate(c):
+        print(f"Array {i} length:", len(array))
+    print("--------------------------")
+
+    print("Modified scaled_days:", d)
+    print("Type of Modified scaled_days:", type(d))
+    print("Length of Modified scaled_days:", len(d))
+    for i, array in enumerate(d):
+        print(f"Array {i} length:", len(array))
+    print("--------------------------")
+
+
+# Iterate through each index in the common_indexes, index kept, common removed
+for index in common_indexes:
+    removed_indexes = common_indexes - {index}
+
+    modified_Size1 = [x for x in Size1 if x not in removed_indexes]
+    modified_Inc = [x for x in Inc if x not in removed_indexes]
+    modified_scaled_pop = [x for i, x in enumerate(scaled_pop) if i not in removed_indexes]
+    modified_scaled_days = [x for i, x in enumerate(scaled_days) if i not in removed_indexes]
+
+    print(f"Kept index: {index}, Removed indexes: {removed_indexes}")
+    debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
+
+    # Assuming you have the actual PR_get_param function, replace the line below
+    result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
+    print(f"For Kept index: {index}, Removed indexes: {removed_indexes}, params are: {result}")
+    print("--------------------------")
+
+
+#Index removed, common kept
+for index in common_indexes:
+    kept_indexes = common_indexes - {index}
+
+    modified_Size1 = [x for x in Size1 if x != index]
+    modified_Inc = [x for x in Inc if x != index]
+    modified_scaled_pop = [x for i, x in enumerate(scaled_pop) if i != index]
+    modified_scaled_days = [x for i, x in enumerate(scaled_days) if i != index]
+
+    print(f"Removed index: {index}, Kept indexes: {kept_indexes}")
+    debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
+    result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
+    print(f"For Removed index: {index}, Kept indexes: {kept_indexes}, params are:{result} ")
+    print("--------------------------")
+
+# For combinations: removing one and keeping two, basicaly the combo is already done
+for combo in combinations(common_indexes, 2):
+    kept_indexes = set(combo)
+    removed_index = common_indexes - kept_indexes
+
+    modified_Size1 = [x for x in Size1 if x not in removed_index]
+    modified_Inc = [x for x in Inc if x not in removed_index]
+    modified_scaled_pop = [x for i, x in enumerate(scaled_pop) if i not in removed_index]
+    modified_scaled_days = [x for i, x in enumerate(scaled_days) if i not in removed_index]
+
+    print(f"Kept indexes: {kept_indexes}, Removed indexes: {removed_index}")
+    debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
+    result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
+    print(f"For Removed index: {removed_index}, Kept indexes: {kept_indexes}, params are:{result} ")
+    print("--------------------------")
+
+
+
+
+
+
+
+
+#################################OLD BUT WORKS #######################################################
 
 
 # Call the get_param function and store the result
 result = PR_get_param(Size1, Inc, scaled_pop,scaled_days) #Modified function, added scaled_pop to it
 
-file_path = os.path.join(target_dir, "study_size1_param_control" + '.pkl')
-# Save the result as a pickle file
-with open(file_path, 'wb') as f:
-    pickle.dump(result, f)
+print(f"result 1, Size1 Inc: {result}")
+
+
+# Call the get_param function and store the result
+result = PR_get_param(Size1, Dec, scaled_pop,scaled_days) #Modified function, added scaled_pop to
+
+print(f"result 2, Size1 Dec: {result}")
+# Call the get_param function and store the result
+result = PR_get_param(Size1, Up, scaled_pop,scaled_days) #Modified function, added scaled_pop to
+
+print(f"result 3, Size1 Up: {result}")
+
+# Call the get_param function and store the result
+result = PR_get_param(Size1, Down, scaled_pop,scaled_days) #Modified function, added scaled_pop to
+
+print(f"result 4, Size1 Down: {result}")
+
+# file_path = os.path.join(target_dir, "study_size1_param_control" + '.pkl')
+# # Save the result as a pickle file
+# with open(file_path, 'wb') as f:
+#     pickle.dump(result, f)
