@@ -15,6 +15,7 @@ from matplotlib.lines import Line2D
 import sys
 import builtins
 import csv
+import time as TIME
 
 
 #Importing the local functions
@@ -452,124 +453,201 @@ for i in common_all_three:
     print(f"for {i} in list_patients and in {common_all_three}: {list_patients[i]}")
 print("\n=== END OF DEBUGGING INFORMATION ===\n")
 
-#all patients
-# Call the get_param function and store the result
-result = PR_get_param(Size1, Inc, scaled_pop,scaled_days) #Modified function, added scaled_pop to it
-
-print(f"result 1, Size1 Inc: {result}")
 
 
-####Attempting to determine parameter for Size1, increase List_d by removing one and than adding one
-common_indexes = {370, 359, 335} #C, determined with Checking_union.py
+Run_Total = False
+if Run_Total == True:
+    #Doing new gridsearch:
+    #PR_get_param_Fixed(size, response, scaled_pop, scaled_days, patient_list, Control):
+    Result_run_model_fixed_fixed = PR_get_param_Fixed(Size1,Inc,scaled_pop,scaled_days,list_patients,Control=0)
+    #printing result
+    print(f"Result_run_model_fixed_fixed, Size1 Inc: {Result_run_model_fixed_fixed}")
 
+    TIME.sleep(120)
 
-#Debug funciton
-def debug_function(a, b, c, d):
-    print("Modified Size1:", a)
-    print("Type of Modified Size1:", type(a))
-    print("Length of Modified Size1:", len(a))
-    print("--------------------------")
+    ###OLD it works mostly, need to replace common_indexes with, common_all_three
+    # #all patients
+    # # Call the get_param function and store the result
+    result_run_model_fixed = PR_get_param(Size1, Inc, scaled_pop,scaled_days,list_patients) #Modified function, added scaled_pop to it
 
-    print("Modified Inc:", b)
-    print("Type of Modified Inc:", type(b))
-    print("Length of Modified Inc:", len(b))
-    print("--------------------------")
+    print(f"result_run_model_fixed, Size1 Inc: {result_run_model_fixed}")
+#
 
-    print("Modified scaled_pop:", c)
-    print("Type of Modified scaled_pop:", type(c))
-    print("Length of Modified scaled_pop:", len(c))
-    for i, array in enumerate(c):
-        print(f"Array {i} length:", len(array))
-    print("--------------------------")
+#####Switches#####
+Run_Singles = True
+#C, adivce do one of the statements, and let it corespond in the datapath
+Index_kept = True
+Index_remod = False
+####################
 
-    print("Modified scaled_days:", d)
-    print("Type of Modified scaled_days:", type(d))
-    print("Length of Modified scaled_days:", len(d))
-    for i, array in enumerate(d):
-        print(f"Array {i} length:", len(array))
-    print("--------------------------")
-
-
-# Iterate through each index in the common_indexes, index kept, common removed
-for index in common_indexes:
-    removed_indexes = common_indexes - {index}
-
-    modified_Size1 = [x for x in Size1 if x not in removed_indexes]
-    modified_Inc = [x for x in Inc if x not in removed_indexes]
-    modified_scaled_pop = [x for i, x in enumerate(scaled_pop) if i not in removed_indexes]
-    modified_scaled_days = [x for i, x in enumerate(scaled_days) if i not in removed_indexes]
-
-    print(f"Kept index: {index}, Removed indexes: {removed_indexes}")
-    debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
-
-    # Assuming you have the actual PR_get_param function, replace the line below
-    result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
-    print(f"For Kept index: {index}, Removed indexes: {removed_indexes}, params are: {result}")
-    print("--------------------------")
-
-
-#Index removed, common kept
-for index in common_indexes:
-    kept_indexes = common_indexes - {index}
-
-    modified_Size1 = [x for x in Size1 if x != index]
-    modified_Inc = [x for x in Inc if x != index]
-    modified_scaled_pop = [x for i, x in enumerate(scaled_pop) if i != index]
-    modified_scaled_days = [x for i, x in enumerate(scaled_days) if i != index]
-
-    print(f"Removed index: {index}, Kept indexes: {kept_indexes}")
-    debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
-    result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
-    print(f"For Removed index: {index}, Kept indexes: {kept_indexes}, params are:{result} ")
-    print("--------------------------")
-
-# For combinations: removing one and keeping two, basicaly the combo is already done
-for combo in combinations(common_indexes, 2):
-    kept_indexes = set(combo)
-    removed_index = common_indexes - kept_indexes
-
-    modified_Size1 = [x for x in Size1 if x not in removed_index]
-    modified_Inc = [x for x in Inc if x not in removed_index]
-    modified_scaled_pop = [x for i, x in enumerate(scaled_pop) if i not in removed_index]
-    modified_scaled_days = [x for i, x in enumerate(scaled_days) if i not in removed_index]
-
-    print(f"Kept indexes: {kept_indexes}, Removed indexes: {removed_index}")
-    debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
-    result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
-    print(f"For Removed index: {removed_index}, Kept indexes: {kept_indexes}, params are:{result} ")
-    print("--------------------------")
+#Single runes
+if Run_Singles == True:
 
 
 
+    #Debug funciton
+    # def debug_function(a, b, c, d):
+    #     print("Modified Size1:", a)
+    #     print("Type of Modified Size1:", type(a))
+    #     print("Length of Modified Size1:", len(a))
+    #     print("--------------------------")
+    #
+    #     print("Modified Inc:", b)
+    #     print("Type of Modified Inc:", type(b))
+    #     print("Length of Modified Inc:", len(b))
+    #     print("--------------------------")
+    #
+    #     print("Modified scaled_pop:", c)
+    #     print("Type of Modified scaled_pop:", type(c))
+    #     print("Length of Modified scaled_pop:", len(c))
+    #     for i, array in enumerate(c):
+    #         print(f"Array {i} length:", len(array))
+    #     print("--------------------------")
+    #
+    #     print("Modified scaled_days:", d)
+    #     print("Type of Modified scaled_days:", type(d))
+    #     print("Length of Modified scaled_days:", len(d))
+    #     for i, array in enumerate(d):
+    #         print(f"Array {i} length:", len(array))
+    #     print("--------------------------")
+    #
+    #
+    # Iterate through each index in the common_indexes, index kept, common removed
+    #C, this part is commeted at the moment to prevent overflowing of the folder
+    #Run_model_fixed_fixed
+
+    if Index_kept == True:
+
+        for index in common_all_three:
+            # Only include the current index in the modified_Size1
+            modified_Size1 = [x for x in Size1 if x == index]
+
+            # The other lists remain unchanged
+            modified_Inc = Inc
+            modified_scaled_pop = scaled_pop
+            modified_scaled_days = scaled_days
+            modified_Patient_list = list_patients
+
+            print(f"Kept index: {index}")
+            # debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days,modified_Patient_list)
+
+            # Assuming you have the actual PR_get_param function, replace the line below
+            result = PR_get_param_Fixed(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days,modified_Patient_list,Control=0)
+            print("\n Run_model_Fixed_Fixed Results, 2 removed, 1 kept")
+            print(f"For patient: {list_patients[index]} and modified_list:{modified_Patient_list[index]}, at Kept index: {index}, params are: {result}")
+            TIME.sleep(240) #Adding 10 seconds, for .csv file saves
+            print("--------------------------")
 
 
+    if Index_remod == True:
+        #Index removed, common kept
+        for index in common_all_three:
+            # Exclude the current index from the modified_Size1
+            modified_Size1 = [x for x in Size1 if x != index]
 
+            # The other lists remain unchanged
+            modified_Inc = Inc
+            modified_scaled_pop = scaled_pop
+            modified_scaled_days = scaled_days
+            modified_Patient_list = list_patients
 
+            print(f"Removed index: {index}")
+            # debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days, modified_Patient_list)
+            result = PR_get_param_Fixed(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days,modified_Patient_list,Control=0)
+            print("\n Run_model_Fixed_Fixed Results, 1 removed, 2 kept")
+            print(f"Removed patient: {list_patients[index]} and modified_list: For Removed index: {index}, params are:{result} ")
+            TIME.sleep(240)  # Adding 60 seconds, for .csv file saves
+            print("--------------------------")
 
-#################################OLD BUT WORKS #######################################################
+    if Index_kept == True:
+        #Run_model_Fixed
+        for index in common_all_three:
+            # Only include the current index in the modified_Size1
+            modified_Size1 = [x for x in Size1 if x == index]
 
+            # The other lists remain unchanged
+            modified_Inc = Inc
+            modified_scaled_pop = scaled_pop
+            modified_scaled_days = scaled_days
+            modified_Patient_list = list_patients
 
-# Call the get_param function and store the result
-result = PR_get_param(Size1, Inc, scaled_pop,scaled_days) #Modified function, added scaled_pop to it
+            print(f"Kept index: {index}")
+            # debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days,modified_Patient_list)
 
-print(f"result 1, Size1 Inc: {result}")
+            # Assuming you have the actual PR_get_param function, replace the line below
+            result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days,modified_Patient_list)
+            print("\n Run_model_Fixed Results, 2 removed, 1 kept")
+            print(f"For patient: {list_patients[index]} and modified_list:{modified_Patient_list[index]}, at Kept index: {index}, params are: {result}")
+            TIME.sleep(240) #Adding 10 seconds, for .csv file saves
+            print("--------------------------")
 
+    if Index_remod == True:
+        #Index removed, common kept
+        for index in common_all_three:
+            # Exclude the current index from the modified_Size1
+            modified_Size1 = [x for x in Size1 if x != index]
 
-# Call the get_param function and store the result
-result = PR_get_param(Size1, Dec, scaled_pop,scaled_days) #Modified function, added scaled_pop to
+            # The other lists remain unchanged
+            modified_Inc = Inc
+            modified_scaled_pop = scaled_pop
+            modified_scaled_days = scaled_days
+            modified_Patient_list = list_patients
 
-print(f"result 2, Size1 Dec: {result}")
-# Call the get_param function and store the result
-result = PR_get_param(Size1, Up, scaled_pop,scaled_days) #Modified function, added scaled_pop to
+            print(f"Removed index: {index}")
+            # debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days, modified_Patient_list)
+            result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days,modified_Patient_list)
+            print("\n Run_model_Fixed Results, 1 removed, 2 kept")
+            print(f"Removed patient: {list_patients[index]} and modified_list: For Removed index: {index},, params are:{result} ")
+            TIME.sleep(240)  # Adding 60 seconds, for .csv file saves
+            print("--------------------------")
 
-print(f"result 3, Size1 Up: {result}")
-
-# Call the get_param function and store the result
-result = PR_get_param(Size1, Down, scaled_pop,scaled_days) #Modified function, added scaled_pop to
-
-print(f"result 4, Size1 Down: {result}")
-
-# file_path = os.path.join(target_dir, "study_size1_param_control" + '.pkl')
-# # Save the result as a pickle file
-# with open(file_path, 'wb') as f:
-#     pickle.dump(result, f)
+# # For combinations: removing one and keeping two, basicaly the combo is already done
+# for combo in combinations(common_indexes, 2):
+#     kept_indexes = set(combo)
+#     removed_index = common_indexes - kept_indexes
+#
+#     modified_Size1 = [x for x in Size1 if x not in removed_index]
+#     modified_Inc = [x for x in Inc if x not in removed_index]
+#     modified_scaled_pop = [x for i, x in enumerate(scaled_pop) if i not in removed_index]
+#     modified_scaled_days = [x for i, x in enumerate(scaled_days) if i not in removed_index]
+#
+#     print(f"Kept indexes: {kept_indexes}, Removed indexes: {removed_index}")
+#     debug_function(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
+#     result = PR_get_param(modified_Size1, modified_Inc, modified_scaled_pop, modified_scaled_days)
+#     print(f"For Removed index: {removed_index}, Kept indexes: {kept_indexes}, params are:{result} ")
+#     print("--------------------------")
+#
+#
+#
+#
+#
+#
+#
+#
+# #################################OLD BUT WORKS #######################################################
+#
+#
+# # Call the get_param function and store the result
+# result = PR_get_param(Size1, Inc, scaled_pop,scaled_days) #Modified function, added scaled_pop to it
+#
+# print(f"result 1, Size1 Inc: {result}")
+#
+#
+# # Call the get_param function and store the result
+# result = PR_get_param(Size1, Dec, scaled_pop,scaled_days) #Modified function, added scaled_pop to
+#
+# print(f"result 2, Size1 Dec: {result}")
+# # Call the get_param function and store the result
+# result = PR_get_param(Size1, Up, scaled_pop,scaled_days) #Modified function, added scaled_pop to
+#
+# print(f"result 3, Size1 Up: {result}")
+#
+# # Call the get_param function and store the result
+# result = PR_get_param(Size1, Down, scaled_pop,scaled_days) #Modified function, added scaled_pop to
+#
+# print(f"result 4, Size1 Down: {result}")
+#
+# # file_path = os.path.join(target_dir, "study_size1_param_control" + '.pkl')
+# # # Save the result as a pickle file
+# # with open(file_path, 'wb') as f:
+# #     pickle.dump(result, f)

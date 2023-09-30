@@ -906,61 +906,61 @@ def separate_by_size_predict_newdata4k_expK_all_m2(tuple0):  # free k for all da
     return k0, b0, group, case0, u0, sigma, K0, a0, c0, g0
 
 
-def separate_by_size_predict_newdata4k_expK_all_d(tuple0):  # free k for all dataset with docetaxel! 4 size groups
-    k0 = 0
-    b0 = 0
-    case0 = 'c'
-    group = 's'
-    K0 = 2
-    r = 0
-    sigma = 0
-    u0 = 0
-    a0 = 0
-    c0 = 0
-    K0 = 0
-    g0 = 0
-    if tuple0 in Size1 and tuple0 in Inc:
-        error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
-        8.242930323913428e-05, 0.2, 20, 'exp_K', 0.1, 0.01, 2, 0.7, 0.01, 0.9)
-
-        group = 'Size1, Inc'
-    elif tuple0 in Size1 and tuple0 in Dec:
-        error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
-        8.87496562253954e-06, 0.2, 20, 'exp_K', 0.1, 0.01, 2, 0.7, 0.01, 0.5)
-
-
-    elif tuple0 in Size2 and tuple0 in Inc:
-        error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
-        8.54868897899777e-05, 0.2, 20, 'exp_K', 0.1, 0.1, 2, 0.7, 0.2, 0.9)
-
-        group = 'Size2, Inc'
-    elif tuple0 in Size2 and tuple0 in Dec:
-        error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
-        8.95258530253879e-05, 0.2, 1, 'exp_K', 0.1, 0.1, 2, 0.7, 0.2, 0.9)
-
-
-    elif tuple0 in Size3 and tuple0 in Inc:
-        error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
-        0.0007489938071873247, 0.2, 10, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.5)
-
-        group = 'Size2, Inc'
-    elif tuple0 in Size3 and tuple0 in Dec:
-        error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
-        0.0003549248265986936, 0.2, 10, 'exp_K', 0.1, 0.01, 2, 0.7, 0.2, 0.1)
-
-
-
-    elif tuple0 in Size4 and tuple0 in Inc:
-        error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
-        0.0035659552321450037, 0.2, 2, 'exp_K', 0.1, 0.01, 2, 0.7, 0.01, 0.5)
-
-        group = 'Size3, Inc'
-    elif tuple0 in Size4 and tuple0 in Dec:
-        error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
-        0.00276126528512829, 0.2, 1, 'exp_K', 0.1, 0.1, 2, 0.7, 0.2, 0.9)
-
-    return k0, b0, group, case0, u0, sigma, K0, a0, c0, g0
-
+# def separate_by_size_predict_newdata4k_expK_all_d(tuple0):  # free k for all dataset with docetaxel! 4 size groups
+#     k0 = 0
+#     b0 = 0
+#     case0 = 'c'
+#     group = 's'
+#     K0 = 2
+#     r = 0
+#     sigma = 0
+#     u0 = 0
+#     a0 = 0
+#     c0 = 0
+#     K0 = 0
+#     g0 = 0
+#     if tuple0 in Size1 and tuple0 in Inc:
+#         error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
+#         8.242930323913428e-05, 0.2, 20, 'exp_K', 0.1, 0.01, 2, 0.7, 0.01, 0.9)
+#
+#         group = 'Size1, Inc'
+#     elif tuple0 in Size1 and tuple0 in Dec:
+#         error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
+#         8.87496562253954e-06, 0.2, 20, 'exp_K', 0.1, 0.01, 2, 0.7, 0.01, 0.5)
+#
+#
+#     elif tuple0 in Size2 and tuple0 in Inc:
+#         error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
+#         8.54868897899777e-05, 0.2, 20, 'exp_K', 0.1, 0.1, 2, 0.7, 0.2, 0.9)
+#
+#         group = 'Size2, Inc'
+#     elif tuple0 in Size2 and tuple0 in Dec:
+#         error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
+#         8.95258530253879e-05, 0.2, 1, 'exp_K', 0.1, 0.1, 2, 0.7, 0.2, 0.9)
+#
+#
+#     elif tuple0 in Size3 and tuple0 in Inc:
+#         error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
+#         0.0007489938071873247, 0.2, 10, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.5)
+#
+#         group = 'Size2, Inc'
+#     elif tuple0 in Size3 and tuple0 in Dec:
+#         error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
+#         0.0003549248265986936, 0.2, 10, 'exp_K', 0.1, 0.01, 2, 0.7, 0.2, 0.1)
+#
+#
+#
+#     elif tuple0 in Size4 and tuple0 in Inc:
+#         error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
+#         0.0035659552321450037, 0.2, 2, 'exp_K', 0.1, 0.01, 2, 0.7, 0.01, 0.5)
+#
+#         group = 'Size3, Inc'
+#     elif tuple0 in Size4 and tuple0 in Dec:
+#         error, k0, b0, case0, u0, sigma, K0, a0, c0, g0 = (
+#         0.00276126528512829, 0.2, 1, 'exp_K', 0.1, 0.1, 2, 0.7, 0.2, 0.9)
+#
+#     return k0, b0, group, case0, u0, sigma, K0, a0, c0, g0
+#
 
 def separate_by_size_predict_newdata4k_expK_all_m(tuple0):  # free k for all dataset with MDA! 4 size groups
     k0 = 0
@@ -1751,18 +1751,19 @@ def separate_by_size(study, pop, arm):
     elif arm == 'MPDL3280A':
         k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_m(pop)
     else:
+        print(f"hello world")
         k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_m2(pop)
 
     return k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0
 
 
-def separate_by_size(study, pop, arm):
-    if arm == 'DOCETAXEL' or arm == 'docetaxel':
-        k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_d(pop)
-    else:
-        k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_m(pop)
-
-    return k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0
+# def separate_by_size(study, pop, arm):
+#     if arm == 'DOCETAXEL' or arm == 'docetaxel':
+#         k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_d(pop)
+#     else:
+#         k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all_m(pop)
+#
+#     return k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0
 
 """#optimize"""
 #C, I think that this is the model that we need to have.
