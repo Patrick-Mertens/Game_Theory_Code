@@ -212,7 +212,7 @@ print(f"Dec: {Dec}")
 
 
 ########################################################################
-#C, now come a part of the code where the function of it is a bit vague
+#C, This part of teh code does the filtering, by filterting the inc, decrease array index
 list_d=[]
 list_m=[]
 list_m2=[]
@@ -228,7 +228,7 @@ for i in range(len(list_arms)):
 Inc=[]
 Dec=[]
 for i in range(len(scaled_pop)):
-  if i in list_d: #changed this from list_m to list_d
+  if i in list_d: #changed this from list_m to list_d, to get Inc only coresponding to chemotherapy group
     if scaled_pop[i][0]> scaled_pop[i][1]:
       Dec.append((i))
     else:
@@ -256,6 +256,7 @@ filtered =[]
 
 #Debugging
 print(f" 2 list_patients: {len(list_patients)}")
+#Printing coresponding patient ID
 for i in Size1:
   filtered.append(list_patients[i])
 print(len(set(filtered)))
@@ -263,13 +264,14 @@ print(f"Size1: {filtered}")
 
 filtered2 = []
 
+#Printing coresponding patient ID
 for i in Inc:
   filtered2.append(list_patients[i])
 print(len(set(filtered2)))
 print(f"Inc: {filtered2}")
 
 filtered3 = []
-
+#Printing coresponding patient ID
 for i in list_d:
   filtered3.append(list_patients[i])
 print(len(set(filtered3)))
