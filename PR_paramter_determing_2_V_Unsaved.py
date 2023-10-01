@@ -257,5 +257,5 @@ for i in range(len(list_arms)):
 ###################Getting PARAM####
 #NOTE: Check what for filtering is done Inc, Dec, arrays. if It is list_d it is chemotherapy, if it is list_m that is chemotherapy, if it is list_m2, that is others
 
-result =  PR_get_param_unsave(Size1, Inc)
+result =  PR_get_param_unsave(Size1, Inc,scaled_pop,scaled_days)
 print(f"Params: {result}")
