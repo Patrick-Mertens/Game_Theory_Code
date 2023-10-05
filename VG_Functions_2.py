@@ -12,6 +12,8 @@ import csv
 import traceback
 
 
+
+
 def transform_to_volume(list_diameters0):
   patient=[]
   for j in range(len(list_diameters0)):
@@ -938,6 +940,8 @@ def PR_get_error(group, response, k_val, b_val, case, u0_val, sigma_val, Kmax_va
         list_error.append(list_dict1[count]['mse'])
       else:
         bad += 1
+
+      print(f"{list_dict1}")
     return good, statistics.mean(list_error), len(list_dict1) - good - bad #C, this is the old one but mean give an error, so I removed it
     #return good, list_error, len(list_dict1) - good - bad
 
@@ -1449,6 +1453,9 @@ def PR_get_error_unsaved(group, response, k_val, b_val, case, u0_val, sigma_val,
       list_error.append(list_dict1[count]['mse'])
     else:
       bad += 1
+
+
+    print()
   return good, statistics.mean(list_error), len(
     list_dict1) - good - bad  # C, this is the old one but mean give an error, so I removed it
   # return good, list_error, len(list_dict1) - good - bad
@@ -1469,6 +1476,10 @@ def gridsearch_unsaved(days, pop, model, k_vals,  b_vals, cases,u0_vals, sigma_v
                 for sigma_val in sigma_vals:
                   for g_val in g_vals:
                     list_x, list_u, list_Kmax, error, list_b, list_s ,der = model(days, pop, case, k_val, b_val, u0_val, sigma_val, Kmax_val, a_val, c_val, 'sigma', g_val)
+                    print(f"pop: {pop}")
+                    print(f"list_x: {list_x}")
+                    print(f"error: {error}")
+                    print(f"mse0: {mse0}")
                     if mse(pop, list_x, error)==float(mse(pop, list_x, error)) and mse(pop, list_x, error) < mse0:
                     #if mse(pop, list_x, error)==float(mse(pop, list_x, error)) and mse(pop, list_x, error) > mse0:
 
@@ -1487,6 +1498,7 @@ def gridsearch_unsaved(days, pop, model, k_vals,  b_vals, cases,u0_vals, sigma_v
   return Dict
 
 def run_model_fixed_unsaved(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, free, g_val=0.5):
+  print("It is running")
   list_x =[]
   list_u =[]
   list_Kmax =[]
