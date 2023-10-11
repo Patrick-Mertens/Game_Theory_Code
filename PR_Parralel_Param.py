@@ -227,7 +227,7 @@ for i in range(len(list_arms)):
   else:
     list_m2.append((i))
 
-
+#Creating Chemo group
 Inc=[]
 Dec=[]
 for i in range(len(scaled_pop)):
@@ -236,6 +236,19 @@ for i in range(len(scaled_pop)):
       Dec.append((i))
     else:
       Inc.append((i))
+
+
+#Creating Immuno group
+Inc_Immuno=[]
+Dec_Immuno=[]
+for i in range(len(scaled_pop)):
+  if i in list_m: #changed this from list_m to list_d, to get Inc only coresponding to chemotherapy group
+    if scaled_pop[i][0]> scaled_pop[i][1]:
+      Dec_Immuno.append((i))
+    else:
+      Inc_Immuno.append((i))
+
+
 
 
 list_trends
@@ -298,6 +311,7 @@ Size2_set = set(Size2)
 Size3_set = set(Size3)
 Size4_set = set(Size4)
 Inc_set = set(Inc)
+Dec_set = set(Dec)
 list_d_set = set(list_d)
 
 # Find the common numbers
@@ -307,9 +321,16 @@ common_Inc_list_d = Inc_set.intersection(list_d_set)
 common_all_three = Size1_set.intersection(Inc_set, list_d_set)
 
 ##Common for other sizes
+Size1_common = Size1_set.intersection(Inc_set,list_d_set)
 Size2_common = Size2_set.intersection(Inc_set,list_d_set)
 Size3_common = Size3_set.intersection(Inc_set,list_d_set) #Techinically, list_d intersection is not needed, but still bit nice to have
 Size4_common = Size4_set.intersection(Inc_set,list_d_set)
+
+##Common Dec Chemo
+Size1_common_dec = Size1_set.intersection(Dec_set,list_d_set)
+Size2_common_dec = Size2_set.intersection(Dec_set,list_d_set)
+Size3_common_dec = Size3_set.intersection(Dec_set,list_d_set) #Techinically, list_d intersection is not needed, but still bit nice to have
+Size4_common_dec = Size4_set.intersection(Dec_set,list_d_set)
 
 #Printing patients
 print("\n######## Size 2 ##########")
@@ -357,24 +378,36 @@ def worker_total(study_num, Size, Inc, scaled_pop, scaled_days, list_patients):
 
 
 def worker(study_num, common_indexes, Size, Inc, scaled_pop, scaled_days, list_patients):
-    target_dir = os.path.join(dataset_path, 'Prallel_code','Chemo', 'Inc', 'Index_kept' )
-    if not os.path.exists(target_dir):
-        os.makedirs(target_dir)
+    # Determine the type of study (Inc/Dec) from study_num
+    study_type = 'Inc' if 'Inc' in study_num else 'Dec' if 'Dec' in study_num else None
 
-    filename = os.path.join(target_dir + f"study_{study_num}_results.txt")
+    # Extract the study name e.g., 'Chemo' or 'Immuno'
+    study_name = study_num.split('_')[0]
+
+    if study_type:
+        target_dir = os.path.join(dataset_path, 'Parallel_code', study_name, study_type, 'Index_kept')
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir)
+    else:
+        print(f"Invalid study number format for {study_num}. Expected _Inc or _Dec in the name.")
+        return
+
+    filename = os.path.join(target_dir, f"study_{study_num.rstrip(',')}_results.txt")
+
+
     with builtins.open(filename, "a") as file:
-        for index in common_indexes:
-            modified_Size = [x for x in Size if x != index]
-            result = PR_get_param_unsave(modified_Size, Inc, scaled_pop, scaled_days)  # replace with the actual function call
+            for index in common_indexes:
+                modified_Size = [x for x in Size if x != index]
+                result = PR_get_param_unsave(modified_Size, Inc, scaled_pop, scaled_days)  # replace with the actual function call
 
-            output = (
-                f"\nStudy {study_num} - Removed index: {index}, "
-                f"Removed patient: {list_patients[index]}, params are:{result}\n"
-                "--------------------------"
-            )
-            print(output)
-            file.write(output)
-            TIME.sleep(10)  # adjust the sleep time as needed
+                output = (
+                    f"\nStudy {study_num} - Removed index: {index}, "
+                    f"Removed patient: {list_patients[index]}, params are:{result}\n"
+                    "--------------------------"
+                )
+                print(output)
+                file.write(result)
+                TIME.sleep(10)  # adjust the sleep time as needed
 
 studies_data = [
         ('Chemo_Size2_Inc,', Size2, Inc, scaled_pop, scaled_days, list_patients),
@@ -383,13 +416,26 @@ studies_data = [
     ]
 
 studies_data_index = [
+        ('Chemo_Size1_Inc,', Size1_common, Size1, Inc, scaled_pop, scaled_days, list_patients),
         ('Chemo_Size2_Inc,', Size2_common, Size2, Inc, scaled_pop, scaled_days, list_patients),
         ('Chemo_Size3_Inc', Size3_common, Size3, Inc, scaled_pop, scaled_days, list_patients),
-        ('Chemo_Size4_Inc', Size4_common, Size4, Inc, scaled_pop, scaled_days, list_patients)
+        ('Chemo_Size4_Inc', Size4_common, Size4, Inc, scaled_pop, scaled_days, list_patients),
+        ('Chemo_Size1_Dec,', Size1_common_dec, Size1, Dec, scaled_pop, scaled_days, list_patients),
+        ('Chemo_Size2_Dec,', Size2_common_dec, Size2, Dec, scaled_pop, scaled_days, list_patients),
+        ('Chemo_Size3_Dec', Size3_common_dec, Size3, Dec, scaled_pop, scaled_days, list_patients),
+        ('Chemo_Size4_Dec', Size4_common_dec, Size4, Dec, scaled_pop, scaled_days, list_patients)
+    ]
+
+studies_data_index = [
+        ('Chemo_Size1_Inc,', Size1_common, Size1, Inc, scaled_pop, scaled_days, list_patients),
+        ('Chemo_Size2_Inc,', Size2_common, Size2, Inc, scaled_pop, scaled_days, list_patients),
+        ('Chemo_Size3_Inc', Size3_common, Size3, Inc, scaled_pop, scaled_days, list_patients),
+        ('Chemo_Size4_Inc', Size4_common, Size4, Inc, scaled_pop, scaled_days, list_patients),
+        ('Chemo_Size1_Dec,', Size1_common_dec, Size1, Dec, scaled_pop, scaled_days, list_patients)
     ]
 
 #Switches
-run_Total = True
+run_Total = False
 run_index = True
 
 if __name__ == '__main__':
@@ -410,6 +456,7 @@ if __name__ == '__main__':
 
 
     if run_index == True:
+        Start_time = TIME.time()
 
         # Prepare data for each study
 
@@ -417,3 +464,8 @@ if __name__ == '__main__':
         # Using multiprocessing to process each study in parallel
         with Pool(processes=cpu_count()) as pool:
             pool.starmap(worker, studies_data_index)
+
+        # Pulling end TIme
+        End_time = TIME.time()
+
+        print(f"Running time: {End_time - Start_time}")

@@ -476,9 +476,9 @@ if Run_Total == True:
 #
 
 #####Switches#####
-Run_Singles = True
+Run_Singles = False
 #C, adivce do one of the statements, and let it corespond in the datapath
-Index_kept = True
+Index_kept = False
 Index_remod = False
 ####################
 

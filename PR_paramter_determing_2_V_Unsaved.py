@@ -20,6 +20,14 @@ import builtins
 import csv
 import time as TIME
 
+#running the code on the GPU
+import cupy as cp
+
+
+
+#Setting seed to test
+np.random.seed(20)
+
 #Importing the local functions
 from VG_Functions_2 import *
 
@@ -213,7 +221,7 @@ for i in range(len(list_arms)):
     list_m2.append((i))
 
 
-#Filtering
+#Filtering, the increase and decrease, based on patient group
 Inc=[]
 Dec=[]
 for i in range(len(scaled_pop)):
@@ -253,9 +261,51 @@ for i in range(len(list_arms)):
     list_b.append((i))
 
 
-###
+###PATIENT ID PRINTING
+
+
+# Convert the lists to sets
+Size1_set = set(Size1)
+Inc_set = set(Inc)
+list_d_set = set(list_d)
+
+# Find the common numbers
+common_Size1_Inc = Size1_set.intersection(Inc_set)
+common_Size1_list_d = Size1_set.intersection(list_d_set)
+common_Inc_list_d = Inc_set.intersection(list_d_set)
+common_all_three = Size1_set.intersection(Inc_set, list_d_set)
+
+# Print the common numbers
+print("Common between Size1 and Inc:", common_Size1_Inc)
+print("Common between Size1 and list_d:", common_Size1_list_d)
+print("Common between Inc and list_d:", common_Inc_list_d)
+print("Common between all three lists:", common_all_three)
+
+
+for i in common_all_three:
+    print(f"for {i} in list_patients and in {common_all_three}: {list_patients[i]}")
+
+
 ###################Getting PARAM####
 #NOTE: Check what for filtering is done Inc, Dec, arrays. if It is list_d it is chemotherapy, if it is list_m that is chemotherapy, if it is list_m2, that is others
 
-result =  PR_get_param_unsave(Size1, Inc,scaled_pop,scaled_days)
+#Checking how many in Size3
+print(f"Amount in Size3: {len(Size3)}")
+
+
+#C,Keeping track how long it takes to call get_param
+Start_time = TIME.time()
+#Get Param
+#Getting param, cpu style
+#result =  PR_get_param_unsave(Size1, Inc,scaled_pop,scaled_days)
+
+#Getting the param GPU style
+result = PR_get_param_unsave(Size1, Inc,scaled_pop,scaled_days)
+
 print(f"Params: {result}")
+#C,End time
+End_time = TIME.time()
+
+# Calculate and print the time difference
+execution_time = End_time - Start_time
+print(f"The function took {execution_time:.2f} seconds to complete.")
