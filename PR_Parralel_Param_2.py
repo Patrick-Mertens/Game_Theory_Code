@@ -29,7 +29,7 @@ from itertools import combinations
 from datetime import datetime
 
 #Set dataset_path, on folder back where the pickle files are located
-dataset_path = r"C:\Users\Shade\Desktop\Master\Project Game Theory Code\Downloaded file\Edited\SpiderProject_KatherLab"  # Use a raw string for the path
+dataset_path = r"/home/bob/project_game_theory_linux/SpiderProject_KatherLab" # Use a raw string for the path
 sys.path.insert(0,dataset_path)
 paramControl = "Control_20_09_2023_attempt_7_redrawing" #C, to many patients
 
@@ -200,9 +200,10 @@ for studyName in studies:
         a_file.close()'''
         #scaled_days.append(scaled_days_i)
          #scaled_pop.append(scaled_pop_i)
-lim = limit(scaled_pop)
+lim = limit(scaled_pop) #C, this lim is probably wrong
+
 #Size1, Size2, Size4, Inc, Dec = split1(lim/2, lim*2, scaled_pop)
-Size1, Size2,Size3, Size4, Inc, Dec = split1(lim/20, lim/2, lim*3, scaled_pop) #C, I think these need to be saved. The lim*2 was orginally lim*3
+Size1, Size2,Size3, Size4, Inc, Dec = split1(lim/20, lim/2, lim*3, scaled_pop) #C, I think these need to be saved
 
 #Printing
 print(f"lim: {lim}") #C, the same as the ipyn: 0.003316135059100506
@@ -212,8 +213,6 @@ print(f"Size3: {Size3}")
 print(f"Size4: {Size4}")
 print(f"Inc: {Inc}")
 print(f"Dec: {Dec}")
-print(scaled_pop)
-print(f"lim: {lim}")
 
 
 ########################################################################
@@ -270,40 +269,40 @@ for i in range(len(list_trends)):
       Fluctuate.append((i))
 
 
-#Debugging
-filtered1_inc = []
-print(f" list_patients: {len(list_patients)}")
-
-#Printing corresponding patient ID for Size1 and Inc
-for i in Size1:
-    if i in Inc:
-        filtered1_inc.append(list_patients[i])
-print(f"Amount patient in Size 1 Inc: {len(set(filtered1_inc))}")
-print(f"Size1 inc: {filtered1_inc}")
-
-filtered2_inc = []
-#Printing corresponding patient ID for Size2 and Inc
-for i in Size2:
-    if i in Inc:
-        filtered2_inc.append(list_patients[i])
-print(f"Amount patient in Size 2 Inc: {len(set(filtered2_inc))}")
-print(f"Size2 inc: {filtered2_inc}")
-
-filtered3_inc = []
-#Printing corresponding patient ID for Size3 and Inc
-for i in Size3:
-    if i in Inc:
-        filtered3_inc.append(list_patients[i])
-print(f"Amount patient in Size 3 Inc: {len(set(filtered3_inc))}")
-print(f"Size3 inc: {filtered3_inc}")
-
-filtered4_inc = []
-#Printing corresponding patient ID for Size4 and Inc
-for i in Size4:
-    if i in Inc:
-        filtered4_inc.append(list_patients[i])
-print(f"Amount patient in Size 4 Inc: {len(set(filtered4_inc))}")
-print(f"Size4 inc: {filtered4_inc}")
+# #Debugging
+# filtered1_inc = []
+# print(f" list_patients: {len(list_patients)}")
+#
+# #Printing corresponding patient ID for Size1 and Inc
+# for i in Size1:
+#     if i in Inc:
+#         filtered1_inc.append(list_patients[i])
+# print(f"Amount patient in Size 1 Inc: {len(set(filtered1_inc))}")
+# print(f"Size1 inc: {filtered1_inc}")
+#
+# filtered2_inc = []
+# #Printing corresponding patient ID for Size2 and Inc
+# for i in Size2:
+#     if i in Inc:
+#         filtered2_inc.append(list_patients[i])
+# print(f"Amount patient in Size 2 Inc: {len(set(filtered2_inc))}")
+# print(f"Size2 inc: {filtered2_inc}")
+#
+# filtered3_inc = []
+# #Printing corresponding patient ID for Size3 and Inc
+# for i in Size3:
+#     if i in Inc:
+#         filtered3_inc.append(list_patients[i])
+# print(f"Amount patient in Size 3 Inc: {len(set(filtered3_inc))}")
+# print(f"Size3 inc: {filtered3_inc}")
+#
+# filtered4_inc = []
+# #Printing corresponding patient ID for Size4 and Inc
+# for i in Size4:
+#     if i in Inc:
+#         filtered4_inc.append(list_patients[i])
+# print(f"Amount patient in Size 4 Inc: {len(set(filtered4_inc))}")
+# print(f"Size4 inc: {filtered4_inc}")
 
 ## DETERMERNING COMMON ##
 
@@ -314,6 +313,8 @@ Size3_set = set(Size3)
 Size4_set = set(Size4)
 Inc_set = set(Inc)
 Dec_set = set(Dec)
+Inc_set_immuno = set(Inc_Immuno)
+Dec_set_immuno = set(Dec_Immuno)
 list_d_set = set(list_d)
 
 # Find the common numbers
@@ -334,24 +335,110 @@ Size2_common_dec = Size2_set.intersection(Dec_set,list_d_set)
 Size3_common_dec = Size3_set.intersection(Dec_set,list_d_set) #Techinically, list_d intersection is not needed, but still bit nice to have
 Size4_common_dec = Size4_set.intersection(Dec_set,list_d_set)
 
-#Printing patients
-print("\n######## Size 2 ##########")
-for i in Size2_common:
-    print(f"for {i} in list_patients and in {Size2_common}: {list_patients[i]}")
-print("\n=== END OF Size 2 INFORMATION ===\n")
+###Immuno
+Immuno_Size1_Inc = Size1_set.intersection(Inc_set_immuno)
+Immuno_Size2_Inc = Size2_set.intersection(Inc_set_immuno)
+Immuno_Size3_Inc = Size3_set.intersection(Inc_set_immuno)
+Immuno_Size4_Inc = Size4_set.intersection(Inc_set_immuno)
 
-#Printing patients
-print("\n######## Size 3 ##########")
-for i in Size3_common:
-    print(f"for {i} in list_patients and in {Size3_common}: {list_patients[i]}")
-print("\n=== END OF Size 3 INFORMATION ===\n")
+###Immuno Dec
+Immuno_Size1_Dec = Size1_set.intersection(Dec_set_immuno)
+Immuno_Size2_Dec = Size2_set.intersection(Dec_set_immuno)
+Immuno_Size3_Dec = Size3_set.intersection(Dec_set_immuno)
+Immuno_Size4_Dec = Size4_set.intersection(Dec_set_immuno)
 
 
-#Printing patients
-print("\n######## Size 4 ##########")
-for i in Size4_common:
-    print(f"for {i} in list_patients and in {Size4_common}: {list_patients[i]}")
-print("\n=== END OF Size 4 INFORMATION ===\n")
+
+#########################DEBUGGING SCRIPT ###################################
+
+##Cheking distrubtion:
+# A helper function to print patient IDs for a given common variable
+def print_common_patient_ids(common_var, label):
+    patient_ids = [list_patients[i] for i in common_var]
+    print(f"Amount of patients in {label}: {len(set(patient_ids))}")
+    print(f"{label}: {patient_ids}")
+    print("------")
+
+# Printing patient IDs for each common variable
+print_common_patient_ids(Size1_common, "Size1_Common_Inc")
+print_common_patient_ids(Size2_common, "Size2_Common_Inc")
+print_common_patient_ids(Size3_common, "Size3_Common_Inc")
+print_common_patient_ids(Size4_common, "Size4_Common_Inc")
+
+print_common_patient_ids(Size1_common_dec, "Size1_Common_Dec")
+print_common_patient_ids(Size2_common_dec, "Size2_Common_Dec")
+print_common_patient_ids(Size3_common_dec, "Size3_Common_Dec")
+print_common_patient_ids(Size4_common_dec, "Size4_Common_Dec")
+
+print_common_patient_ids(Immuno_Size1_Inc, "Immuno_Size1_Inc")
+print_common_patient_ids(Immuno_Size2_Inc, "Immuno_Size2_Inc")
+print_common_patient_ids(Immuno_Size3_Inc, "Immuno_Size3_Inc")
+print_common_patient_ids(Immuno_Size4_Inc, "Immuno_Size4_Inc")
+
+print_common_patient_ids(Immuno_Size1_Dec, "Immuno_Size1_Dec")
+print_common_patient_ids(Immuno_Size2_Dec, "Immuno_Size2_Dec")
+print_common_patient_ids(Immuno_Size3_Dec, "Immuno_Size3_Dec")
+print_common_patient_ids(Immuno_Size4_Dec, "Immuno_Size4_Dec")
+
+
+# A helper function to gather patient IDs for a given common variable
+def get_common_patient_ids(common_var):
+    return [list_patients[i] for i in common_var]
+
+# Gathering patient IDs for each common variable
+data = {
+    "Size1_Common_Inc": get_common_patient_ids(Size1_common),
+    "Size2_Common_Inc": get_common_patient_ids(Size2_common),
+    "Size3_Common_Inc": get_common_patient_ids(Size3_common),
+    "Size4_Common_Inc": get_common_patient_ids(Size4_common),
+    "Size1_Common_Dec": get_common_patient_ids(Size1_common_dec),
+    "Size2_Common_Dec": get_common_patient_ids(Size2_common_dec),
+    "Size3_Common_Dec": get_common_patient_ids(Size3_common_dec),
+    "Size4_Common_Dec": get_common_patient_ids(Size4_common_dec),
+    "Immuno_Size1_Inc": get_common_patient_ids(Immuno_Size1_Inc),
+    "Immuno_Size2_Inc": get_common_patient_ids(Immuno_Size2_Inc),
+    "Immuno_Size3_Inc": get_common_patient_ids(Immuno_Size3_Inc),
+    "Immuno_Size4_Inc": get_common_patient_ids(Immuno_Size4_Inc),
+    "Immuno_Size1_Dec": get_common_patient_ids(Immuno_Size1_Dec),
+    "Immuno_Size2_Dec": get_common_patient_ids(Immuno_Size2_Dec),
+    "Immuno_Size3_Dec": get_common_patient_ids(Immuno_Size3_Dec),
+    "Immuno_Size4_Dec": get_common_patient_ids(Immuno_Size4_Dec)
+}
+
+# Creating a DataFrame
+df = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in data.items() ]))
+
+# Filling NaN values with an empty string (or you can choose to keep them as NaN)
+df = df.fillna('')
+
+# Saving the DataFrame to a .txt file
+file_path = os.path.join(dataset_path, "patient_table.txt")
+df.to_csv(file_path, index=False, sep='\t')
+
+ #########################DEBUGGING SCRIPT ###################################
+
+# print(f'Size 2:{Size2_common}')
+# print(f'Size 3:{Size3_common}')
+# print(f'Size 4:{Size4_common}')
+#
+# #Printing patients
+# print("\n######## Size 2 ##########")
+# for i in Size2_common:
+#     print(f"for {i} in list_patients and in {Size2_common}: {list_patients[i]}")
+# print("\n=== END OF Size 2 INFORMATION ===\n")
+#
+# #Printing patients
+# print("\n######## Size 3 ##########")
+# for i in Size3_common:
+#     print(f"for {i} in list_patients and in {Size3_common}: {list_patients[i]}")
+# print("\n=== END OF Size 3 INFORMATION ===\n")
+#
+#
+# #Printing patients
+# print("\n######## Size 4 ##########")
+# for i in Size4_common:
+#     print(f"for {i} in list_patients and in {Size4_common}: {list_patients[i]}")
+# print("\n=== END OF Size 4 INFORMATION ===\n")
 
 
 #C,Keeping track how long it takes to call get_param
@@ -359,27 +446,53 @@ Start_time = TIME.time()
 
 
 ##PARALEL CODE####
-def worker_total(study_num, Size, Inc, scaled_pop, scaled_days, list_patients):
-    target_dir = os.path.join(dataset_path, 'Prallel_code', 'Chemo', 'Inc','Total')
-    if not os.path.exists(target_dir):
-        os.makedirs(target_dir)
+def worker_total(study_num, Size, Inc, scaled_pop, scaled_days):
+    print('It is running!!!!!')
+    # Determine the type of study (Inc/Dec) from study_num
+    study_type = 'Inc' if 'Inc' in study_num else 'Dec' if 'Dec' in study_num else None
 
-    filename = os.path.join(target_dir + f"study_total_{study_num}_results.txt")
-    with builtins.open(filename, "a") as file:
-        result = PR_get_param_unsave(Size, Inc, scaled_pop, scaled_days)  # replace with the actual function call
+    # Extract the study name e.g., 'Chemo' or 'Immuno'
+    study_name = study_num.split('_')[0]
+
+    if study_type:
+        target_dir = os.path.join(dataset_path, 'Parallel_code', study_name, study_type, 'Total')
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir)
+    else:
+        print(f"Invalid study number format for {study_num}. Expected _Inc or _Dec in the name.")
+        return
+
+    filename = os.path.join(target_dir, f"Total_study_{study_num.rstrip(',')}_results.txt")
+    with builtins.open(filename, "a", newline='') as file:
+        csv_writer = csv.writer(file)
+
+        # If it’s a fresh new file, write the header (you can adjust the header fields according to your result structure)
+        if file.tell() == 0:
+            csv_writer.writerow(
+                ["Study Number", "mse", "k_val", "b_val", "case", "u0_val", "sigma","K", "a", "c", "g"])
+
+
+
+        result = PR_get_param_unsave(Size, Inc, scaled_pop,scaled_days)  # replace with the actual function call
 
         output = (
-            f"\nStudy {study_num} - Using all indexes, "
+            f"\nStudy {study_num}, "
             f"params are:{result}\n"
             "--------------------------"
         )
         print(output)
-        file.write(output)
-        TIME.sleep(10)
+
+        # Assuming the result is a tuple or list, convert it to a string or individual strings for CSV writing
+        if isinstance(result, (list, tuple)):
+            csv_writer.writerow([study_num,  *result])
+        else:
+            csv_writer.writerow([study_num,  str(result)])
+        TIME.sleep(1)
 
 
 
 def worker(study_num, common_indexes, Size, Inc, scaled_pop, scaled_days, list_patients):
+    print('It is running!!!!!')
     # Determine the type of study (Inc/Dec) from study_num
     study_type = 'Inc' if 'Inc' in study_num else 'Dec' if 'Dec' in study_num else None
 
@@ -397,24 +510,53 @@ def worker(study_num, common_indexes, Size, Inc, scaled_pop, scaled_days, list_p
     filename = os.path.join(target_dir, f"study_{study_num.rstrip(',')}_results.txt")
 
 
-    with builtins.open(filename, "a") as file:
-            for index in common_indexes:
-                modified_Size = [x for x in Size if x != index]
-                result = PR_get_param_unsave(modified_Size, Inc, scaled_pop, scaled_days)  # replace with the actual function call
+    with builtins.open(filename, "a", newline= '') as file:
+        csv_writer = csv.writer(file)
 
-                output = (
-                    f"\nStudy {study_num} - Removed index: {index}, "
-                    f"Removed patient: {list_patients[index]}, params are:{result}\n"
-                    "--------------------------"
-                )
-                print(output)
-                file.write(result)
-                TIME.sleep(10)  # adjust the sleep time as needed
+        # If it’s a fresh new file, write the header (you can adjust the header fields according to your result structure)
+        if file.tell() == 0:
+            csv_writer.writerow(["Study Number", "Removed Index", "Removed Patient", "mse", "k_val", "b_val", "case", "u0_val", "sigma", "K", "a", "c", "g"])
+
+
+        for index in common_indexes:
+            modified_Size = [x for x in Size if x != index]
+            result = PR_get_param_unsave(modified_Size, Inc, scaled_pop,
+                                         scaled_days)  # replace with the actual function call
+
+            output = (
+                f"\nStudy {study_num} - Removed index: {index}, "
+                f"Removed patient: {list_patients[index]}, params are:{result}\n"
+                "--------------------------"
+            )
+            print(output)
+
+            # Assuming the result is a tuple or list, convert it to a string or individual strings for CSV writing
+            if isinstance(result, (list, tuple)):
+                csv_writer.writerow([study_num, index, list_patients[index], *result])
+            else:
+                csv_writer.writerow([study_num, index, list_patients[index], str(result)])
+            TIME.sleep(1)  # adjust the sleep time as needed
+
+
 
 studies_data = [
-        ('Chemo_Size2_Inc,', Size2, Inc, scaled_pop, scaled_days, list_patients),
-        ('Chemo_Size3_Inc', Size3, Inc, scaled_pop, scaled_days, list_patients),
-        ('Chemo_Size4_Inc',  Size4, Inc, scaled_pop, scaled_days, list_patients)
+        ('Chemo_Size1_Inc,', Size1, Inc, scaled_pop, scaled_days),
+        ('Chemo_Size2_Inc,', Size2, Inc, scaled_pop, scaled_days),
+        ('Chemo_Size3_Inc', Size3, Inc, scaled_pop, scaled_days),
+        ('Chemo_Size4_Inc',  Size4, Inc, scaled_pop, scaled_days),
+        ('Chemo_Size1_Inc,', Size1, Inc, scaled_pop, scaled_days), #C, this one is included to determine if temp files influcences results
+        ('Chemo_Size1_Dec,', Size1, Dec, scaled_pop, scaled_days),
+        ('Chemo_Size2_Dec,', Size2, Dec, scaled_pop, scaled_days),
+        ('Chemo_Size3_Dec', Size3, Dec, scaled_pop, scaled_days),
+        ('Chemo_Size4_Dec',  Size4, Dec, scaled_pop, scaled_days),
+        ('Immuno_Size1_Inc,', Size1, Inc_Immuno, scaled_pop, scaled_days),
+        ('Immuno_Size2_Inc,', Size2, Inc_Immuno, scaled_pop, scaled_days),
+        ('Immuno_Size3_Inc', Size3, Inc_Immuno, scaled_pop, scaled_days),
+        ('Immuno_Size4_Inc',  Size4, Inc_Immuno, scaled_pop, scaled_days),
+        ('Immuno_Size1_Dec,', Size1, Dec_Immuno, scaled_pop, scaled_days),
+        ('Immuno_Size2_Dec,', Size2, Dec_Immuno, scaled_pop, scaled_days),
+        ('Immuno_Size3_Dec', Size3, Dec_Immuno, scaled_pop, scaled_days),
+        ('Immuno_Size4_Dec',  Size4, Dec_Immuno, scaled_pop, scaled_days)
     ]
 
 studies_data_index = [
@@ -428,46 +570,48 @@ studies_data_index = [
         ('Chemo_Size4_Dec', Size4_common_dec, Size4, Dec, scaled_pop, scaled_days, list_patients)
     ]
 
-studies_data_index = [
-        ('Chemo_Size1_Inc,', Size1_common, Size1, Inc, scaled_pop, scaled_days, list_patients),
-        ('Chemo_Size2_Inc,', Size2_common, Size2, Inc, scaled_pop, scaled_days, list_patients),
-        ('Chemo_Size3_Inc', Size3_common, Size3, Inc, scaled_pop, scaled_days, list_patients),
-        ('Chemo_Size4_Inc', Size4_common, Size4, Inc, scaled_pop, scaled_days, list_patients),
-        ('Chemo_Size1_Dec,', Size1_common_dec, Size1, Dec, scaled_pop, scaled_days, list_patients)
-    ]
+# studies_data_index = [
+#         ('Immuno_Size1_Inc,', Immuno_Size1_Inc, Size1, Inc_Immuno, scaled_pop, scaled_days, list_patients),
+#         ('Immuno_Size2_Inc,', Immuno_Size2_Inc, Size2, Inc_Immuno, scaled_pop, scaled_days, list_patients),
+#         ('Immuno_Size3_Inc', Immuno_Size3_Inc, Size3, Inc_Immuno, scaled_pop, scaled_days, list_patients),
+#         ('Immuno_Size4_Inc', Immuno_Size4_Inc, Size4, Inc_Immuno, scaled_pop, scaled_days, list_patients),
+#         ('Immuno_Size1_Dec,', Immuno_Size1_Dec, Size1, Dec_Immuno, scaled_pop, scaled_days, list_patients),
+#         ('Immuno_Size2_Dec,',  Immuno_Size2_Dec, Size2, Dec_Immuno, scaled_pop, scaled_days, list_patients),
+#         ('Immuno_Size3_Dec', Immuno_Size3_Dec, Size3, Dec_Immuno, scaled_pop, scaled_days, list_patients),
+#         ('Immuno_Size4_Dec', Immuno_Size4_Dec, Size4, Dec_Immuno, scaled_pop, scaled_days, list_patients)
+# ]
 
-# #Switches
-# run_Total = False
-# run_index = True
-#
-# if __name__ == '__main__':
-#
-#     if run_Total == True:
-#         Start_time = TIME.time()
-#         # Prepare data for each study
-#         # Using multiprocessing to process each study in parallel
-#         with Pool(processes=cpu_count()) as pool:
-#             pool.starmap(worker_total, studies_data)
-#
-#
-#         #Pulling end TIme
-#         End_time = TIME.time()
-#
-#         print(f"Running time: {End_time-Start_time}")
-#
-#
-#
-#     if run_index == True:
-#         Start_time = TIME.time()
-#
-#         # Prepare data for each study
-#
-#
-#         # Using multiprocessing to process each study in parallel
-#         with Pool(processes=cpu_count()) as pool:
-#             pool.starmap(worker, studies_data_index)
-#
-#         # Pulling end TIme
-#         End_time = TIME.time()
-#
-#         print(f"Running time: {End_time - Start_time}")
+
+
+
+#Switches
+run_Total = True
+run_index = False
+
+if __name__ == '__main__':
+
+    if run_Total == True:
+        Start_time = TIME.time()
+        # Prepare data for each study
+        # Using multiprocessing to process each study in parallel
+        with Pool(processes=cpu_count()) as pool:
+            pool.starmap(worker_total, studies_data)
+
+        # Pulling end TIme
+        End_time = TIME.time()
+
+        print(f"Running time: {End_time - Start_time}")
+
+    if run_index == True:
+        Start_time = TIME.time()
+
+        # Prepare data for each study
+
+        # Using multiprocessing to process each study in parallel
+        with Pool(processes=cpu_count()) as pool:
+            pool.starmap(worker, studies_data_index)
+
+        # Pulling end TIme
+        End_time = TIME.time()
+
+        print(f"Running time: {End_time - Start_time}")

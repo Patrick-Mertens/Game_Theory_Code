@@ -10,7 +10,7 @@ import sys as sys
 import os
 import csv
 import traceback
-
+import cupy as cp
 
 
 
@@ -127,6 +127,9 @@ def limit(scaled_days):
   for i in range(len(scaled_days)):
 
     first.append(scaled_days[i][0])
+
+  print(f"Smallest number in the list: {min(first)}")
+  print(f"Largest number in the list: {max(first)}")
   return statistics.median(first)
 
 def limit1(scaled_days):
@@ -1587,3 +1590,72 @@ def run_model_fixed_unsaved(days, population, case, k_val, b_val, u0_val, sigma_
   list_s = 0'''
   return list_x, list_u, list_Kmax, error, list_b, list_s, der
 
+def PR_get_param_unsaved_gpu(size, response, scaled_pop, scaled_days):
+    errors = []
+    Dict = {'mse': 1000, 'k_val': 0, 'b_val': 0, 'case': 0, 'good': 0, 'u0_val': 0, 'K': 0, 'a': 0, 'c': 0, 'g': 0,
+            'sigma': 0}
+    for k in [0.2, 0.9, 2, 1, 5]:
+      for b in [0.2, 1, 2, 10, 20]:
+        for case in ['exp_K']:
+          for u0 in [0.1]:
+            for sigma in [0]:
+              for K in [1, 2]:
+                for a_val in [1]:
+                  for c_val in [0.001, 0.01, 0.1, 0.2]:
+                    for g_val in [0.1, 0.5, 0.9]:  # 0.1, 0.5, 0.9
+                      results = (PR_get_error_unsaved_gpu(size, response, k, b, case, u0, sigma, K, a_val, c_val, g_val, scaled_pop,
+                                              scaled_days))
+                      # if results[0] >Dict['good'] or (results[0]== Dict['good'] and results[1]< Dict['mse']):
+                      if results[1] < Dict['mse']:
+                        Dict['mse'] = results[1]
+                        Dict['k_val'] = k
+                        Dict['b_val'] = b
+                        Dict['case'] = case
+                        Dict['good'] = results[0]
+                        Dict['u0_val'] = u0
+                        Dict['sigma'] = sigma
+                        Dict['K'] = K
+                        Dict['a'] = a_val
+                        Dict['c'] = c_val
+                        Dict['g'] = g_val
+    return Dict['mse'], Dict['k_val'], Dict['b_val'], Dict['case'], Dict['u0_val'], Dict['sigma'], Dict['K'], Dict['a'], \
+      Dict['c'], Dict['g'] #C, what is function of \
+
+
+def PR_get_error_unsaved_gpu(group, response, k_val, b_val, case, u0_val, sigma_val, Kmax_val, a_val, c_val, g_val, scaled_pop,
+                 scaled_days):
+  list_dict1 = []
+  bad = 0
+  for i in range(len(scaled_pop)):
+    # for j in range(len(list_days[i])):
+    if (i) in group and (i) in response:
+      try:
+        # Convert the arrays to CuPy arrays here
+        scaled_pop_gpu = cp.array(scaled_pop[i])
+        scaled_days_gpu = cp.array(scaled_days[i])
+
+        D = gridsearch_unsaved(days=scaled_days_gpu, pop=scaled_pop_gpu, model=run_model_fixed_unsaved, k_vals=[k_val], b_vals=[b_val],
+                       cases=[case], u0_vals=[u0_val], sigma_vals=[sigma_val], Kmax_vals=[Kmax_val], a_vals=[a_val],
+                       c_vals=[c_val], g_vals=[g_val])
+        list_dict1.append(D)
+
+      except Exception as e:
+        print("An error occurred:", e)
+        print("Traceback:")
+        traceback.print_exc()  # This line prints the entire traceback
+        print(f"Except statement in, PR_get_error_GPU, for i: {i}")
+        list_dict1.append({'mse': 1000, 'Kmax0': 0, 'k_val': 0, 'b_val': 0, 'case': 0, 'u0_val': 0, 'sigma_val': 0})
+  good = 0
+  list_error = []
+  for count in range(len(list_dict1)):
+    if (list_dict1[count]['mse']) < 0.1:  # and (list_dict[count]['k_val'])==0.1 and (list_dict[count]['b_val'])==0.02:
+      good += 1
+    if list_dict1[count]['mse'] != 1000:
+      list_error.append(list_dict1[count]['mse'])
+    else:
+      bad += 1
+
+
+
+  return good, statistics.mean(list_error), len(list_dict1) - good - bad  # C, this is the old one but mean give an error, so I removed it
+  # return good, list_error, len(list_dict1) - good - bad

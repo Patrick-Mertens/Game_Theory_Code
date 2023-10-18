@@ -24,6 +24,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib as mpl
+import time as TIME
 
 #Set dataset_path, on folder back where the pickle files are located
 dataset_path = r"C:\Users\Shade\Desktop\Master\Project Game Theory Code\Downloaded file\Edited\SpiderProject_KatherLab"  # Use a raw string for the path
@@ -37,7 +38,7 @@ studies =['1', '2', '3', '4', '5']
 trends = ['Up', 'Down', 'Fluctuate', 'Evolution']
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
 #C, this got in Narmian code overwritten almost immediatly, dont know exactly why.
-functions =['GeneralBertalanffy']
+functions =['Exponential']
 
 result = pd.DataFrame()
 
@@ -85,6 +86,7 @@ for f in functions:
     indices_with_zeros = []
     for s in studies:
         # Use os.path.join to make the code system-independent
+        print(f'path::{os.path.join(dataset_path, f, s + ".pkl")}')
         result_dict = pickle.load(builtins.open(os.path.join(dataset_path, f, s + ".pkl"), "rb"))
 
         arms = list(result_dict.keys())
@@ -94,7 +96,11 @@ for f in functions:
                 index_name = arm + '_' + trend
                 indices_with_zeros.append(index_name)
 
+                print(f"Index_name:{index_name}")
+
                 rSquare_values = result_dict[arm][trend]['rSquare']
+                #print(f"result_dict:{result_dict[arm]}")
+                #TIME.sleep(10)
 
                 # Check if rSquare_values is empty
                 if not rSquare_values:
@@ -109,6 +115,12 @@ for f in functions:
 
     result[f] = temp
     result_with_zeros[f] = temp_with_zeros
+
+
+#
+# print(result[arms])
+# print(result_dict['MPDL3280A_1']['Up']['rSquare'])
+
 
 # Debugging prints
 print("Hello World")  # Indicates new for loop runs
@@ -172,6 +184,8 @@ axs[1].set_title('R-Squared Values Including Zeros for Empty Entries', fontsize=
 # Show both plots in the same window
 plt.show()
 
+rSquare_df = pd.DataFrame(result.values, index=indices, columns=functions)
+print(rSquare_df)
 
 #Debugging
 print("plotting was success!!")

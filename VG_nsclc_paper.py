@@ -66,10 +66,10 @@ studies = ['a', 'a', 'c', 'd', 'e']
 studies =['1', '2', '3', '4', '5']
 
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
-functions =['GeneralBertalanffy']
+functions =['ClassicBertalanffy']
 splits = [True, True, False, True, True]
 noPars = [3, 3, 3, 4, 3, 4]
-noPars = [4, 3, 3, 4, 3, 4]
+noPars = [3, 3, 3, 4, 3, 4] #C, 4, 3, 3, 4, 3, 4. Each parm function match one code
 
 #studies=['1']
 #functions=['Exponential']
@@ -87,15 +87,17 @@ for studyName in studies:
     data, arms = utils.Read_Excel(rawDataPath, ArmName = 'TRT01A', split = sp)
     for functionToFit in functions:
 
+
         find = functions.index(functionToFit)
         noParameters = noPars[find]
+        print(f"noParmaters:{noParameters}")
         result_dict = utils.Create_Result_dict(arms, ['Up', 'Down', 'Fluctuate', 'Evolution'], categories = ['patientID', 'rmse', 'rSquare',
 
                                                                                                 #'time', 'dimension', 'prediction', 'aic', 'params', 'cancer'])
         #result_dict = utils.Create_Result_dict(arms, ['Unique'], categories = ['patientID', 'rmse', 'rSquare',
                                                                                                 'time', 'dimension', 'prediction', 'aic', 'params', 'cancer'])
 
-        print(functionToFit)
+        print(f"FucntionFit: {functionToFit}")
         print(studyName)
 
         for arm in arms:
@@ -110,7 +112,7 @@ for studyName in studies:
                 temp = [i for i in temp if not str(i) == 'nan']
                 temp = [i for i in temp if not '-NT' in str(i)]
 
-                if  'INV-T001' in temp :
+                if  'INV-T001' in temp:
                     tumorFiltered_Data = filteredData.loc[filteredData['TRLINKID'] == 'INV-T001']
                     tumorFiltered_Data.dropna(subset = ['TRDY'], inplace = True)
                     #tumorFiltered_Data.dropna(subset = ['VISITDY'], inplace = True)
@@ -156,13 +158,17 @@ for studyName in studies:
                         #firstTime = time[0:-3]
 
                         try:
+                            print("Try block beging")
                             fitfunc = ff.Select_Fucntion(functionToFit)
                             geneticParameters = ff.generate_Initial_Parameters_genetic(fitfunc,k = noParameters, boundry = [0, 1], t = time, d = dimension)
                             fittedParameters, pcov = curve_fit(fitfunc, time, dimension, geneticParameters, maxfev = 200000, bounds = param_bounds, method = 'trf')
                             modelPredictions = fitfunc(time, *fittedParameters)    # this is the list of values predicted with model
+                            print("Try block end")
                         except:
                             try:
+                                print("First except block")
                                 geneticParameters = ff.generate_Initial_Parameters_genetic(fitfunc,k = noParameters, boundry = [0, 1], t = time, d = dimension)
+                                print("First except block: after genrate")
                                 if len(param_bounds[0]) == 4:
                                    geneticParameters[0] = 0.001
                                    geneticParameters[1] = 0.001
@@ -174,6 +180,7 @@ for studyName in studies:
                                 modelPredictions = fitfunc(time, *fittedParameters)
                             except:
                                 print(key)
+                                print("EXCEPT STATMENT, SECOND")
                                 result_dict =  utils.Write_On_Result_dict(result_dict, arm, trend, categories = ['patientID','time', 'dimension', 'prediction', 'rmse', 'rSquare','aic', 'params', 'cancer'],
                                                                           values = [key, time, dimension, np.nan, np.nan,np.nan, np.nan, np.nan, cn])
                                 continue
