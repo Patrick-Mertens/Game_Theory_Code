@@ -12,6 +12,7 @@ import warnings
 from scipy.optimize import curve_fit
 import sys
 import json
+import csv as csv
 
 #C, this package is needed
 import builtins
@@ -66,14 +67,16 @@ studies = ['a', 'a', 'c', 'd', 'e']
 studies =['1', '2', '3', '4', '5']
 
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
-functions =['ClassicBertalanffy']
+#functions =['Exponential']
 splits = [True, True, False, True, True]
 noPars = [3, 3, 3, 4, 3, 4]
-noPars = [3, 3, 3, 4, 3, 4] #C, 4, 3, 3, 4, 3, 4. Each parm function match one code
+#noPars = [3, 3, 3, 4, 3, 4] #C, 4, 3, 3, 4, 3, 4. Each parm function match one code
 
 #studies=['1']
 #functions=['Exponential']
 
+#C, switches
+SaveERROR = True
 
 for studyName in studies:
     sind = studies.index(studyName)
@@ -104,6 +107,7 @@ for studyName in studies:
             print(arm)
             data_temp = data.loc[data['receivedTreatment'] == arm]
             patientID = list(data_temp['USUBJID'].unique())
+
 
             for key in patientID:
 
@@ -195,6 +199,54 @@ for studyName in studies:
                         SE = np.square(absError)
                         temp_sum = np.sum(SE)
                         MSE = np.mean(SE)
+
+                        #C, adding a swithc that turn this variable on and off
+                        if SaveERROR == True:
+                            #C, first checking if these are avaible as I think that is:
+                            print(f"functionToFit for path: {functionToFit},arm: {arm}, trend: {trend} ")
+
+                            target_dir = os.path.join(dataset_path, 'Error_Params_diff_seed_23_attempted_2_night_Run', studyName, functionToFit, arm)
+                            if not os.path.exists(target_dir):
+                                os.makedirs(target_dir)
+
+                            filename = os.path.join(target_dir, f"Error_params{functionToFit}_{studyName}_{arm}_{trend}_results.txt")
+                            rowinfo = f"{functionToFit}_{studyName}_{arm}_{trend}"
+
+                            with builtins.open(filename, "a", newline='') as file:
+                                csv_writer = csv.writer(file)
+
+                                # If it’s a fresh new file, write the header (you can adjust the header fields according to your result structure)
+                                if file.tell() == 0:
+                                    csv_writer.writerow(
+                                        ['rowinfo','PatienID','absError', 'SE', 'temp_sum', 'MSE'])
+
+                                result = [key,absError, SE, temp_sum, MSE] #
+
+                                output = (
+                                    f"\nError from: FunctionToFit: {functionToFit}, study: {studyName}, arm:{arm}, trend: {trend}, "
+                                    f"params are:{result}\n"
+                                    "--------------------------"
+                                )
+
+                                result2 = [rowinfo,key,absError, SE, temp_sum, MSE]
+                                output2 = f"\n{result2}\n"
+
+
+                                # Assuming the result is a tuple or list, convert it to a string or individual strings for CSV writing
+                                if isinstance(output2, (list, tuple, float, int)):
+                                    #csv_writer.writerow([rowinfo] + [str(item) for item in result])
+                                    file.write(output2)
+
+                                else:
+                                    file.write(output2)
+                                    #csv_writer.writerow([rowinfo, str(result)])
+
+
+
+
+
+
+
 
                         result_dict =  utils.Write_On_Result_dict(result_dict, arm, trend, categories = ['patientID','time', 'dimension', 'prediction', 'rmse', 'rSquare','aic', 'params', 'cancer'],
                                                                           values = [key, time, dimension, modelPredictions, mean_squared_error(dimension, modelPredictions),

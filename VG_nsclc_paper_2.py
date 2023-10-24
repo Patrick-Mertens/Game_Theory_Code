@@ -86,8 +86,8 @@ for f in functions:
     indices_with_zeros = []
     for s in studies:
         # Use os.path.join to make the code system-independent
-        print(f'path::{os.path.join(dataset_path, f, s + ".pkl")}')
-        result_dict = pickle.load(builtins.open(os.path.join(dataset_path, f, s + ".pkl"), "rb"))
+        print(f'path::{os.path.join(dataset_path, f,"Seed_24", s + ".pkl")}')
+        result_dict = pickle.load(builtins.open(os.path.join(dataset_path, f,"Seed_24", s + ".pkl"), "rb"))
 
         arms = list(result_dict.keys())
         arms.sort()
@@ -115,6 +115,56 @@ for f in functions:
 
     result[f] = temp
     result_with_zeros[f] = temp_with_zeros
+
+
+#
+# result = pd.DataFrame()
+# result_with_zeros = pd.DataFrame()
+# for f in functions:
+#     temp = []
+#     temp_with_zeros = []
+#     indices = []
+#     indices_with_zeros = []
+#     for s in studies:
+#         print(f'path::{os.path.join(dataset_path, f, s + ".pkl")}')
+#         result_dict = pickle.load(builtins.open(os.path.join(dataset_path, f, s + ".pkl"), "rb"))
+#
+#         arms = list(result_dict.keys())
+#         arms.sort()
+#         evolution_patients = set()  # Keep track of patients that are already in 'Evolution' trend
+#         for arm in arms:
+#             # First, gather all patient IDs that are in 'Evolution' trend
+#             if 'Evolution' in result_dict[arm]:
+#                 evolution_patients.update(result_dict[arm]['Evolution']['patientID'])
+#
+#             for trend in trends:
+#                 index_name = arm + '_' + trend
+#                 indices_with_zeros.append(index_name)
+#
+#                 print(f"Index_name:{index_name}")
+#
+#                 rSquare_values = result_dict[arm][trend]['rSquare']
+#                 patient_ids = result_dict[arm][trend]['patientID']
+#
+#                 # Check if rSquare_values is empty
+#                 if not rSquare_values:
+#                     print("rSquare values is empty for arm:", arm, ", trend:", trend)
+#                     temp_with_zeros.append(0.0)
+#                     continue
+#
+#                 # Exclude rSquare_values of patients that are in 'Evolution' trend when processing other trends
+#                 if trend != 'Evolution':
+#                     rSquare_values = [value for i, value in enumerate(rSquare_values) if patient_ids[i] not in evolution_patients]
+#
+#                 print("rSquare values:", rSquare_values)
+#                 temp.append(np.around(np.nanmean(rSquare_values), 3))
+#                 temp_with_zeros.append(np.around(np.nanmean(rSquare_values), 3))
+#                 indices.append(index_name)
+#
+#     result[f] = temp
+#     result_with_zeros[f] = temp_with_zeros
+#
+
 
 
 #
