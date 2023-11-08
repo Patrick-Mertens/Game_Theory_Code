@@ -100,7 +100,7 @@ studies =['1', '2', '3', '4', '5']
 trends = ['Up', 'Down', 'Fluctuate', 'Evolution']
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
 #C, this got in Narmian code overwritten almost immediatly, dont know exactly why.
-functions =['Gompertz']
+functions =['Gompertz_orginial']
 
 result = pd.DataFrame()
 
@@ -290,7 +290,8 @@ for f in functions:
     # Loop over each study
     for s in studies:
         # Load the data from the pickle file
-        result_dict = pickle.load(builtins.open(os.path.join(dataset_path, f, s + ".pkl"), "rb"))
+        result_dict = pickle.load(builtins.open(os.path.join(dataset_path, f,"Runner_script","for_loop_itteration_7",'Orginial_formula', s + ".pkl"), "rb"))
+        print(f"Result_dict:{result_dict}")
 
         # Sorting the arm keys for consistency
         arms = list(result_dict.keys())
@@ -307,8 +308,8 @@ for f in functions:
                 # If the trend is 'Fluctuate', remove patients from the 'Evolution' trend
                 if trend == 'Fluctuate':
                     # Print rSquare array length before removal
-                    print(
-                        f"rSquare array length for {arm} and {trend} before removal: {len(result_dict[arm][trend]['rSquare'])}")
+                    # print(
+                    #     f"rSquare array length for {arm} and {trend} before removal: {len(result_dict[arm][trend]['rSquare'])}")
 
                     # Fetch patient IDs associated with the 'Evolution' trend
                     patient_ids_evolution = get_patient_ids_from_trend(result_dict[arm]['Evolution'])
@@ -317,7 +318,7 @@ for f in functions:
                     indices_to_remove = [result_dict[arm][trend]['patientID'].index(pid) for pid in
                                          patient_ids_evolution if pid in result_dict[arm][trend]['patientID']]
                     indices_to_remove.sort()
-
+                    #print(f"Indeces to remove:{indices_to_remove} ")
                     # Remove corresponding rSquare values using the found indices
                     for idx in reversed(indices_to_remove):
                         del result_dict[arm][trend]['rSquare'][idx]

@@ -2760,7 +2760,7 @@ for studyName in studies:
                             #print('pred: ' + str(list_x))                            
                             if True:
                               fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5), constrained_layout=True)
-                              #fig.suptitle("Exponential cost of resistance "  + arm, fontsize=12)
+                              #fig.suptitle("Exponential cost of resistance "  + arm, fontsize=12) #C, is this for loop for resistnace????
                               ax1.scatter(time, list_u1, label='u', color='black', linestyle='dashed')
                               ax1.legend( fontsize=12)
                             

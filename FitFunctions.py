@@ -43,7 +43,7 @@ def Select_Fucntion(functionName):
     elif functionName == 'ClassicBertalanffy' :
         def fitfunc(t, alpha, beta, v0):     
             def myode(dim, t):
-                return (alpha * (dim**2/3)) - (beta*dim)     # Classic Bertalanffy    
+                return (alpha * (dim**(2/3))) - (beta*dim)     # Classic Bertalanffy, C, this is probaly a mistake
             Ca0 = v0
             Casol = odeint(myode, Ca0, t)
             return Casol[:,0]   
@@ -51,14 +51,17 @@ def Select_Fucntion(functionName):
     elif functionName == 'GeneralBertalanffy' :
         def fitfunc(t, alpha, beta, lamda, v0):             
             def myode(dim, t):
-                return alpha * (dim**lamda) - beta*dim     # General Bertalanffy   
+                return (alpha * (dim**lamda)) - (beta*dim)    # General Bertalanffy, C, this is probaly a mistake
             Ca0 = v0
             Casol = odeint(myode, Ca0, t)
             return Casol[:,0]        
     elif functionName == 'Gompertz' :
         def fitfunc(t, alpha, beta, v0):     
-            def myode(dim, t):
-                return  dim*(beta - alpha* np.log(dim))    # Gompertz
+            def myode(dim, t): #C, added a bracket, was previously: dim*(beta - alpha* np.log(dim))
+                # print(f"alpha {alpha}, beta: {beta}, dim: {dim}")
+                # print(f"orginial return: {dim*(beta - alpha* np.log(dim))}")
+                # print(f"new return: {dim * (beta - alpha * np.log(dim))}")
+                return  dim*(beta - (alpha* np.log(dim)))    # Gompertz
             Ca0 = v0
             Casol = odeint(myode, Ca0, t)
             return Casol[:,0]
