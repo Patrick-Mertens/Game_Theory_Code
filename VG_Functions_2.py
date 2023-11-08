@@ -1659,3 +1659,260 @@ def PR_get_error_unsaved_gpu(group, response, k_val, b_val, case, u0_val, sigma_
 
   return good, statistics.mean(list_error), len(list_dict1) - good - bad  # C, this is the old one but mean give an error, so I removed it
   # return good, list_error, len(list_dict1) - good - bad
+
+
+def PR_separate_by_size_chemo_vs_immuno(study, arm, Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec):
+  #C,Chemo
+  if arm == 'DOCETAXEL' or arm == 'docetaxel':
+    k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = Chemo_PR_separate_by_size_predict_newdata4k_expK_all_d(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
+  #C, Immuno
+  else:
+    k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = Immuno_PR_separate_by_size_predict_newdata4k_expK_all_m(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
+
+  return k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0
+
+def Chemo_PR_separate_by_size_predict_newdata4k_expK_all_d(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec): #free sigma for all dataset with docetaxel! 4 size groups
+  k0=0
+  b0=0
+  case0 ='c'
+  group='s'
+  K0=2
+  r =0
+  sigma=0
+  u0=0
+  a0=0
+  c0=0
+  K0=0
+  g0=0
+  if len(Size1) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(8.4973845374143e-05, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+    group='Size1, Inc'
+  elif len(Size1) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(1.001913325901334e-05, 0.2, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size2) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(8.629359474403977e-05, 1, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size2) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(6.240565937342348e-05, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size3) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0005069629697468392, 2, 10, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.9)
+
+    group='Size2, Inc'
+  elif len(Size3) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00028086457826024576, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.1)
+
+
+  elif len(Size4) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.003322438544321211, 1, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+    group='Size3, Inc'
+  elif len(Size4) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0024268534223027454, 0.9, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+
+  return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
+
+def Immuno_PR_separate_by_size_predict_newdata4k_expK_all_m(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec): #free sigma for all dataset with MDA! 4 size groups
+  k0=0
+  b0=0
+  case0 ='c'
+  group='s'
+  K0=2
+  r =0
+  sigma=0
+  u0=0
+  a0=0
+  c0=0
+  K0=0
+  g0=0
+  if len(Size1) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(9.602616255922462e-05, 2, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.5)
+
+
+
+    group='Size1, Inc'
+  elif len(Size1) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(1.4924284769001023e-05, 1, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.1)
+
+
+
+  elif len(Size2) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0005581028152651971, 2, 0.2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size2) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0002474685799481297, 0.9, 1, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.1)
+
+
+  elif len(Size3) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.0008712237364711401, 0.9, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.9)
+
+
+    group='Size2, Inc'
+  elif len(Size3) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00045665782397184303, 0.2, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.2, 0.5)
+
+
+  elif len(Size4) > 0 and len(Inc) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.003805638444789154, 0.9, 2, 'exp_K', 0.1, 0.01, 1, 0.7, 0.1, 0.9)
+
+
+    group='Size3, Inc'
+  elif len(Size4) > 0 and len(Dec) > 0:
+    error, k0, b0, case0, u0, sigma, K0, a0, c0,g0 =(0.00583392900567394, 0.9, 20, 'exp_K', 0.1, 0.01, 1, 0.7, 0.01, 0.1)
+
+
+
+
+  return k0,b0, group, case0,  u0, sigma, K0, a0, c0, g0
+
+
+def run_model_m(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, step_val, g_val, obj):
+  list_x = []
+  list_u = []
+  list_Kmax = []
+  list_b = []
+  error = []
+  der = []
+  list_s = []
+  m = GEKKO(remote=False)
+  eval = days
+  # eval = np.linspace(days[0], days[-1], 20, endpoint=True)
+  m.time = eval
+  x = m.Var(value=population[0], lb=0)
+  sigma = m.Param(sigma_val)
+  d = m.Param(c_val)
+  k = m.Param(k_val)
+  b = m.Param(b_val)
+  r = m.Param(a_val)
+  step = np.random.normal(0.5, 0.5, len(eval))
+  step = np.ones(len(eval))
+  # step= step_val*step
+  step[0] = 1
+  m_param = m.MV(value=step, lb=0, ub=1, integer=True); m_param.STATUS = 1 #Should, ub not be 2
+  u = m.Var(value=u0_val, lb=0)
+  a = m.Param(a_val)
+  c = m.Param(c_val)
+  Kmax = m.Param(Kmax0)
+
+  if case == 'case3':
+    m.Equations([x.dt() == (x) * (r * (1 - u) * (1 - x / Kmax) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (b * m_param / ((b * u + k) ** 2) - r * (1 - x / (Kmax)))])
+  elif case == 'case0':
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (m_param * b / ((k + b * u) ** 2))])
+  elif case == 'case4':
+    m.Equations([x.dt() == x * (r * (1 - u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (-2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'case5':
+    m.Equations([x.dt() == x * (r * (1 + u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * ((-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+
+  p = np.zeros(len(eval))
+  p[-1] = 1.0
+  final = m.Param(value=p)
+  if obj == 'final':
+    m.Obj(x * final)
+  elif obj == 'x':
+    m.Obj(x)
+  elif obj == 'variance':
+    p = np.ones(len(eval))
+    # mean = sum(x.value)/(len(eval))
+    m.Obj(((x.value) * p - (sum(x.value)) / (len(eval))) ** 2)
+  m.options.IMODE = 6
+  m.options.SOLVER = 1
+  m.options.NODES = 5  # collocation nodes
+
+  # optimize
+  m.solve(disp=False, GUI=False)
+  m.options.OBJFCNVAL
+
+  list_x = x.value
+  list_u = u.value
+  # list_der.append(Kmax.value[0])
+  list_Kmax = m_param.value
+
+  return list_x, list_u, list_Kmax, error, list_b, list_s, m.options.OBJFCNVAL
+
+
+def run_model_sim(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, m_val, g_val):
+  list_x = []
+  list_u = []
+  list_Kmax = []
+  list_b = []
+  error = []
+  der = []
+  list_s = []
+
+  m = GEKKO(remote=False)
+  # eval= days[i][j]
+  eval = days
+  # eval = np.linspace(days[i][j][0], days[i][j][-1], 20, endpoint=True)
+  m.time = eval
+  # disc= np.ones(len(days[i][j]))
+  # x_data= population[i][j]
+  x_data = population
+  x = m.Var(value=x_data[0], lb=0)
+  sigma = m.Param(sigma_val)
+  d = m.Param(c_val)
+  k = m.Param(k_val)
+  b = m.Param(b_val)
+  r = m.Param(a_val)
+  step = [0 if z < 0 else 1 for z in m.time]
+
+  m_param = m.Param(m_val)
+  u = m.Var(value=u0_val, lb=0)
+  # m.free(u)
+  a = m.Param(a_val)
+  c = m.Param(c_val)
+  Kmax = m.Param(Kmax0)
+
+  if case == 'case4':
+    m.Equations([x.dt() == x * (r * (1 - u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (-2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'case0':
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (m_param * b / ((k + b * u) ** 2))])
+  elif case == 'case3':
+    m.Equations([x.dt() == (x) * (r * (1 - u) * (1 - x / Kmax) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (b * m_param / ((b * u + k) ** 2) - r * (1 - x / (Kmax)))])
+  elif case == 'case5':
+    m.Equations([x.dt() == x * (r * (1 + u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * ((-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K_neg':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == -sigma * (
+                           (-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+
+  m.options.IMODE = 4
+  m.options.SOLVER = 1
+  m.options.NODES = 5  # collocation nodes
+
+  # m.options.COLDSTART=2
+  m.solve(disp=False, GUI=False)
+
+  list_x = x.value
+  # list_Kmax.append(m_param.value)
+  list_u = u.value
+  # list_b.append(b_val)
+  # list_s.append(sigma_val)
+
+  return list_x, list_u, list_Kmax, error, list_b, list_s

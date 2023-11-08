@@ -33,7 +33,8 @@ sys.path.insert(0,dataset_path)
 
 ##initial condtions, same as VG_nsclc_paper.py,
 studies = ['a', 'a', 'c', 'd', 'e']
-studies =['1', '2', '3', '4', '5']
+studies =['1', '2', '3', '4']
+#studies =['5']
 
 trends = ['Up', 'Down', 'Fluctuate', 'Evolution']
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
@@ -86,8 +87,8 @@ for f in functions:
     indices_with_zeros = []
     for s in studies:
         # Use os.path.join to make the code system-independent
-        print(f'path::{os.path.join(dataset_path, f,"Seed_24", s + ".pkl")}')
-        result_dict = pickle.load(builtins.open(os.path.join(dataset_path, f,"Seed_24", s + ".pkl"), "rb"))
+        print(f'path::{os.path.join(dataset_path, f,"Runner_script/seed_43/for_loop_itteration_1/Combo_formula", s + ".pkl")}')
+        result_dict = pickle.load(builtins.open(os.path.join(dataset_path, f,"Runner_script/seed_42/for_loop_itteration_2/Combo_formula", s + ".pkl"), "rb"))
 
         arms = list(result_dict.keys())
         arms.sort()
