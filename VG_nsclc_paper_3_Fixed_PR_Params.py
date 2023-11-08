@@ -336,9 +336,13 @@ target=[]
 
 
 #Testing switch
+Save = True
+Save_Gekko = False
 Test = 2
-resistance_question = 'Evolution' #trends = ['Up', 'Down', 'Fluctuate', 'Evolution'] #Done: Up, Down
+Trend_resistance = ['Up', 'Down', 'Fluctuate', 'Evolution']#trends = ['Up', 'Down', 'Fluctuate', 'Evolution'] #Done: Up, Down
 
+#List
+gekko_list =[]
 
 
 for studyName in studies:
@@ -446,7 +450,7 @@ for studyName in studies:
                                 sub_dirs = ["Check_values", "PR"]
 
                                 # Full dataset path
-                                target_dir = os.path.join(dataset_path,'Results_nsclc_paper_3','PR',f"{studyName}", "Sigma 0", functionToFit,resistance_question, *sub_dirs)
+                                target_dir = os.path.join(dataset_path,'Results_nsclc_paper_3','PR_sigma_0',f"{studyName}", "Sigma 0", functionToFit,resistance_question, *sub_dirs)
 
                                 # Check if the path exists, create it if it does not
                                 if not os.path.exists(target_dir):
@@ -603,10 +607,13 @@ for studyName in studies:
                                         f"der: {der}, type of: {type(der)}, Length: {len(der) if hasattr(der, '__len__') else 'N/A'}\n")
 
                             initial_x.append(dimension[0])
+
                             if len(Inc) == 1:
                                 initial_trend.append(1)
                             else:
                                 initial_trend.append(0)
+
+
 
                             r_values.append(list_Kmax)
                             u_values.append(list_u[0])
@@ -619,33 +626,104 @@ for studyName in studies:
 
                             modelPredictions = list_x
 
-                            if trend == resistance_question:
-                                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
-                                fig.suptitle("Exponential cost of resistance " + arm, fontsize=15)
+                            if Save_Gekko == True:
+                                group_name = ''
+                                if len(Size1) >0:
+                                    group_name = 'Size1'
+                                elif len(Size2) >0:
+                                    group_name = 'Size2'
+                                elif len(Size3) > 0:
+                                    group_name = 'Size3'
+                                elif len(Size4) > 0:
+                                    group_name = 'Size4'
 
-                                # Change scatter plot to gray line for ax1
-                                ax1.plot(time, list_u, label='u', color='gray')
-                                ax1.legend(fontsize=15)
+                                medcine = ''
+                                if arm == 'DOCETAXEL' or arm == 'docetaxel':
+                                    medcine = "Chemo"
+                                else:
+                                    medcine = "Immuno"
 
-                                # For ax2, use scatter for red crosses and plot for blue line
-                                ax2.scatter(time, dimension, label="real measurements", color='red',
-                                            marker='x')  # red crosses
-                                ax2.plot(time, list_x, label='model predictions', color='blue')  # blue line
-                                ax2.legend(fontsize=15)
+                                Dec_or_inc = ''
+                                if len(Inc) > 0:
+                                    Dec_or_inc = "Inc"
+                                elif len(Dec) >0:
+                                    Dec_or_inc = "Dec"
 
-                                ax1.set_xlabel("days from treatment start", fontsize=15)
-                                ax1.set_ylabel("value of u", fontsize=15)
-                                ax2.set_xlabel("days from treatment start", fontsize=15)
-                                ax2.set_ylabel("volume of tumor", fontsize=15)
+                                trend_list = ''
+                                if len(Up) >0:
+                                    trend_list ='Up'
+                                elif len(Down) >0:
+                                    trend_list = 'Down'
+                                elif len(Evolution) >0:
+                                    trend_list = 'Evolution'
+                                elif len(Fluctuate) >0 and len(Evolution) >0:
+                                    trend_list = "Evolution_Fluctuate"
+                                elif len(Fluctuate) >0:
+                                    trend_list = "Fluctuate"
 
-                                # Create the folder if it doesn't exist.
-                                save_path = os.path.join(dataset_path,'Results_nsclc_paper_3','PR',f"{studyName}", "Sigma 0", functionToFit,resistance_question,'Plots',
-                                                         f"{arm}")  # added arm to it
-                                if not os.path.exists(save_path):
-                                    os.makedirs(save_path)
+                                value1 = f"{medcine}_{group_name}_{Dec_or_inc}"
 
-                                # Save the figure
-                                fig.savefig(os.path.join(save_path, str(key)))
+                                # Create the data row dictionary
+                                data_row = {
+                                    'Value1': value1,
+                                    'PatientID': key,
+                                    'Trend': trend_list,
+                                    'First U Value': list_u[0] if list_u else None,
+                                    'U Values': list_u,
+                                    'r_values': list_Kmax, #for some reason it is has Kmax as variable
+                                    'Kmax': der,
+                                    'Sigma Values': list_s
+                                }
+                                # Append the data row to gekko_list
+                                gekko_list.append(data_row)
+
+                            if Save == True:
+                                for resistance_question in Trend_resistance:
+                                    if trend == resistance_question:
+                                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
+                                        fig.suptitle("Exponential cost of resistance " + arm, fontsize=15)
+
+                                        # Change scatter plot to gray line for ax1
+                                        ax1.plot(time, list_u, label='u', color='gray')
+                                        ax1.legend(fontsize=15)
+
+                                        # For ax2, change scatter to plot for red line
+                                        ax2.plot(time, dimension, label="real measurements", color='red', linestyle='-',
+                                                 marker='x')  # red line
+                                        ax2.plot(time, list_x, label='model predictions', color='blue')  # blue line
+                                        ax2.legend(fontsize=15)
+
+                                        ax1.set_xlabel("days from treatment start", fontsize=15)
+                                        ax1.set_ylabel("value of u", fontsize=15)
+                                        ax2.set_xlabel("days from treatment start", fontsize=15)
+                                        ax2.set_ylabel("volume of tumor", fontsize=15)
+
+                                        # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
+                                        # fig.suptitle("Exponential cost of resistance " + arm, fontsize=15)
+                                        #
+                                        # # Change scatter plot to gray line for ax1
+                                        # ax1.plot(time, list_u, label='u', color='gray')
+                                        # ax1.legend(fontsize=15)
+                                        #
+                                        # # For ax2, use scatter for red crosses and plot for blue line
+                                        # ax2.scatter(time, dimension, label="real measurements", color='red',
+                                        #             marker='x')  # red crosses
+                                        # ax2.plot(time, list_x, label='model predictions', color='blue')  # blue line
+                                        # ax2.legend(fontsize=15)
+                                        #
+                                        # ax1.set_xlabel("days from treatment start", fontsize=15)
+                                        # ax1.set_ylabel("value of u", fontsize=15)
+                                        # ax2.set_xlabel("days from treatment start", fontsize=15)
+                                        # ax2.set_ylabel("volume of tumor", fontsize=15)
+
+                                        # Create the folder if it doesn't exist.
+                                        save_path = os.path.join(dataset_path,'Results_nsclc_paper_3','PR_sigma_0',f"{studyName}", "Sigma 0", functionToFit,resistance_question,'Plots',
+                                                                 f"{arm}")  # added arm to it
+                                        if not os.path.exists(save_path):
+                                            os.makedirs(save_path)
+
+                                        # Save the figure
+                                        fig.savefig(os.path.join(save_path, str(key)))
 
 
 
@@ -689,7 +767,7 @@ for studyName in studies:
                             # Saving Params
 
                             # Ensure the directory exists, if not, create it
-                            directory_parm = os.path.join(dataset_path, 'Results_nsclc_paper_3','PR',f"{studyName}", "Sigma 0",functionToFit,resistance_question, paramControl, f"{arm}")  # C, I have to many patients so let me determine which one is used
+                            directory_parm = os.path.join(dataset_path, 'Results_nsclc_paper_3','PR_sigma_0',f"{studyName}", "Sigma 0",functionToFit,resistance_question, paramControl, f"{arm}")  # C, I have to many patients so let me determine which one is used
                             if not os.path.exists(directory_parm):
                                 os.makedirs(directory_parm)
 
@@ -724,22 +802,23 @@ for studyName in studies:
                                 except Exception as e:
                                     print(f"Exception while extending variable {var}: {e}")
                                     extended_variables.append([var] * max_len)  # Default action
+                            if Save == True:
 
-                            # Write to the CSV file
-                            with open(csv_file_path, 'w', newline='') as csvfile:
-                                csvwriter = csv.writer(csvfile)
+                                # Write to the CSV file
+                                with open(csv_file_path, 'w', newline='') as csvfile:
+                                    csvwriter = csv.writer(csvfile)
 
-                                # Writing the header
-                                headers = ["PatientID", "Size1", "Size2", "Size3", "Size4", "Up", "Down", "Fluctuate",
-                                           "Evolution",
-                                           "Inc", "Dec", "lim", "list_Kmax(r_values)", "list_u[0](u_values)",
-                                           "list_s(sigma values)", "absError", "SE", "temp_sum", "MSE"]
-                                csvwriter.writerow(headers)
+                                    # Writing the header
+                                    headers = ["PatientID", "Size1", "Size2", "Size3", "Size4", "Up", "Down", "Fluctuate",
+                                               "Evolution",
+                                               "Inc", "Dec", "lim", "list_Kmax(r_values)", "list_u[0](u_values)",
+                                               "list_s(sigma values)", "absError", "SE", "temp_sum", "MSE"]
+                                    csvwriter.writerow(headers)
 
-                                # Writing the data
-                                for i in range(max_len):
-                                    row = [extended_variables[j][i] for j in range(len(extended_variables))]
-                                    csvwriter.writerow(row)
+                                    # Writing the data
+                                    for i in range(max_len):
+                                        row = [extended_variables[j][i] for j in range(len(extended_variables))]
+                                        csvwriter.writerow(row)
 
                             result_dict = utils.Write_On_Result_dict(result_dict, arm, trend,
                                                                      categories=['patientID', 'time', 'dimension',
@@ -759,24 +838,33 @@ for studyName in studies:
 
 
 
+        if Save == True:
+            # Properly join paths and check if directory exists
+            full_Pickle_directory_path = os.path.join(dataset_path, 'Results_nsclc_paper_3','PR_sigma_0',f"{studyName}", "Sigma 0", functionToFit,resistance_question,'Pickle_Files')
 
-        # Properly join paths and check if directory exists
-        full_Pickle_directory_path = os.path.join(dataset_path, 'Results_nsclc_paper_3','PR',f"{studyName}", "Sigma 0", functionToFit,resistance_question,'Pickle_Files')
+            # Check if directory exists and if not, create it
+            if not os.path.exists(full_Pickle_directory_path):
+                os.makedirs(full_Pickle_directory_path)
 
-        # Check if directory exists and if not, create it
-        if not os.path.exists(full_Pickle_directory_path):
-            os.makedirs(full_Pickle_directory_path)
+            # Now join the path for the file
+            file_path = os.path.join(full_Pickle_directory_path, studyName + '.pkl')
 
-        # Now join the path for the file
-        file_path = os.path.join(full_Pickle_directory_path, studyName + '.pkl')
+            with builtins.open(file_path, "wb") as a_file:  # Using with ensures the file will be closed after the block
+                pickle.dump(result_dict, a_file)
 
-        with builtins.open(file_path, "wb") as a_file:  # Using with ensures the file will be closed after the block
-            pickle.dump(result_dict, a_file)
-
-        a_file.close()
+            a_file.close()
 
 
+# Convert the list of dictionaries to a DataFrame
+gekko_df = pd.DataFrame(gekko_list)
 
+# Define the full path including the file name for the Excel file
+excel_file_path = os.path.join(dataset_path, 'gekko_data.xlsx')
+
+# Save the DataFrame to an Excel file
+gekko_df.to_excel(excel_file_path, index=False)
+
+print(f" dataframe:{gekko_df}" )
 print("Done with running")
 
 

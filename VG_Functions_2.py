@@ -1558,7 +1558,10 @@ def run_model_fixed_unsaved(days, population, case, k_val, b_val, u0_val, sigma_
   x.SPLO = 0
   if free =='sigma':
     #sigma= m.Param(0)
-    sigma = m.FV(value=0.01, lb= 0, ub=0.1); sigma.STATUS=1
+
+    #sigma = 0
+
+    sigma = m.FV(value=0.01, lb= 0, ub=0.1); sigma.STATUS=1 #C, This was uncommented, I commented it
     #sigma = m.FV(value=0.01, lb= 0, ub=1); sigma.STATUS=1
 
     k = m.Param(k_val)
@@ -1576,10 +1579,9 @@ def run_model_fixed_unsaved(days, population, case, k_val, b_val, u0_val, sigma_
   #r = m.FV(value=c_val, lb=c_val, ub=1); r.STATUS=1 #, ub=a_val  #estaba en 0.01 y lb= 0.00001
 
   #r = m.FV(value=0.01, lb=0.00001, ub=1); r.STATUS=1 #, ub=a_val  #estaba en 0.01 y lb= 0.00001
-
   step = [0 if z<0 else 1 for z in m.time]
   m_param = m.Param(1)
-  u = m.Var(value=u0_val, lb=0)#, ub=1)
+  u = m.Var(value=u0_val, lb=0)  # , ub=1)
   m.free(u)
   a = m.Param(a_val)
   c= m.Param(c_val)
@@ -1848,6 +1850,8 @@ def run_model_sim(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0
     m_param = m.Param(m_val)
     u = m.Var(value=u0_val, lb=0)
     # m.free(u)
+
+
     a = m.Param(a_val)
     c = m.Param(c_val)
     Kmax = m.Param(Kmax0)
@@ -1889,3 +1893,145 @@ def run_model_sim(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0
     # list_s.append(sigma_val)
 
     return list_x, list_u, list_Kmax, error, list_b, list_s
+
+
+# Assuming the variables are defined elsewhere and available in the context.
+
+# This function will create a row of data based on the given parameters.
+
+def create_row(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec, arm, key, list_u, list_kmax,
+               list_s):
+  # Determine size
+
+  size = ''
+
+  if Size1:
+
+    size = 'Size1'
+
+  elif Size2:
+
+    size = 'Size2'
+
+  elif Size3:
+
+    size = 'Size3'
+
+  elif Size4:
+
+    size = 'Size4'
+
+  # Determine treatment type based on the arm
+
+  treatment_type = '_Chemo' if arm.lower() == 'DOCETAXEL' or arm.lower() == 'docetaxel'else '_Immuno'
+
+  # Determine if Inc or Dec is present
+
+  growth = '_Dec' if Dec else '_Inc' if Inc else ''
+
+  # Combine the strings to form the first value
+
+  first_value = f"{size}{treatment_type}{growth}"
+
+  # Determine the trend value based on the presence of arrays in Up, Down, Evolution, and Fluctuate
+
+  trend_list = [var_name for var_name, var_value in
+                zip(['Up', 'Down', 'Evolution', 'Fluctuate'], [Up, Down, Evolution, Fluctuate]) if var_value]
+
+  trend = '_'.join(trend_list)
+
+  # Create a dictionary representing the row
+
+  row = {
+
+    'First Value': first_value,
+
+    'Key': key,
+
+    'Trend': trend,
+
+    'First U Value': list_u[0] if list_u else None,
+
+    'U Values': list_u,
+
+    'Kmax Values': list_kmax,
+
+    'S Values': list_s
+
+  }
+
+  return row
+
+
+def run_model_m(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, step_val, g_val, obj):
+  list_x = []
+  list_u = []
+  list_Kmax = []
+  list_b = []
+  error = []
+  der = []
+  list_s = []
+  m = GEKKO(remote=False)
+  eval = days
+  # eval = np.linspace(days[0], days[-1], 20, endpoint=True)
+  m.time = eval
+  x = m.Var(value=population[0], lb=0)
+  sigma = m.Param(sigma_val)
+  d = m.Param(c_val)
+  k = m.Param(k_val)
+  b = m.Param(b_val)
+  r = m.Param(a_val)
+  step = np.random.normal(0.5, 0.5, len(eval))
+  #step = np.ones(len(eval))
+  # step= step_val*step
+  step[0] = 1
+  m_param = m.MV(value=step, lb=0, ub=1, integer=True);
+  m_param.STATUS = 1
+  u = m.Var(value=u0_val, lb=0)
+  a = m.Param(a_val)
+  c = m.Param(c_val)
+  Kmax = m.Param(Kmax0)
+  #m.free(u) #added this line
+
+  if case == 'case3':
+    m.Equations([x.dt() == (x) * (r * (1 - u) * (1 - x / Kmax) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (b * m_param / ((b * u + k) ** 2) - r * (1 - x / (Kmax)))])
+  elif case == 'case0':
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (m_param * b / ((k + b * u) ** 2))])
+  elif case == 'case4':
+    m.Equations([x.dt() == x * (r * (1 - u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (-2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'case5':
+    m.Equations([x.dt() == x * (r * (1 + u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * ((-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+
+  p = np.zeros(len(eval))
+  p[-1] = 1.0
+  final = m.Param(value=p)
+  if obj == 'final':
+    m.Obj(x * final)
+  elif obj == 'x':
+    m.Obj(x)
+  elif obj == 'variance':
+    p = np.ones(len(eval))
+    # mean = sum(x.value)/(len(eval))
+    m.Obj(((x.value) * p - (sum(x.value)) / (len(eval))) ** 2)
+  m.options.IMODE = 6
+  m.options.SOLVER = 1
+  m.options.NODES = 5  # collocation nodes
+
+  # optimize
+  m.solve(disp=False, GUI=False)
+  m.options.OBJFCNVAL
+
+  list_x = x.value
+  list_u = u.value
+  # list_der.append(Kmax.value[0])
+  list_Kmax = m_param.value
+
+  return list_x, list_u, list_Kmax, error, list_b, list_s, m.options.OBJFCNVAL
