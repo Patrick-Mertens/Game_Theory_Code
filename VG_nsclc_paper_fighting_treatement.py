@@ -1,4 +1,4 @@
-
+#C, this is next part, the previous was VG_nsclc_paper_2.py.
 
 #C, importats from nsclc_paper.ipyn
 import numpy as np
@@ -29,7 +29,8 @@ paramControl = "4_November" #C, to many patients
 
 
 
-"""#simulation"""
+
+
 
 studies = ['a', 'a', 'c', 'd', 'e']
 functions = ['Exponential', 'Logistic', 'ClassicBertalanffy', 'GeneralBertalanffy', 'Gompertz', 'GeneralGompertz']
@@ -87,8 +88,9 @@ u_values = []
 sigma_values = []
 target = []
 count = 0
-list_arms = []
-list_trends = []
+
+
+WHO = 'PR_Params_K_neg_for_both_trend_sigma_0_by_k'
 
 for studyName in studies:
     sind = studies.index(studyName)
@@ -168,51 +170,56 @@ for studyName in studies:
                         # scaled_days.append(time)
                         # scaled_pop.append(dimension)
 
-                        firstDim = dimension[0:-3]
-                        firstTime = time[0:-3]
-                        # firstDim = dimension
-                        # firstTime = time
+                        #firstDim = dimension[0:-3] #this was commented
+                        #firstTime = time[0:-3]
+                        firstDim = dimension #this was uncommented
+                        firstTime = time
                         if 'MPDL3280A' in arm:  # or 'Docetaxel' in arm:
                             count += 1
 
                         try:
-                            # if True:
-                            # if 'DOCETAXEL' in arm or 'Docetaxel' in arm:
-                            # if 'MPDL3280A' in arm:
-                            # count+=1
-                            # Size1, Size2, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split_ind(lim/2, lim*2, dimension, trend)
-                            # Size1, Size2,Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim/lim0[sind], lim/2, lim*3, dimension, trend) #es lim*3
-                            Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim / 20,
-                                                                                                              lim / 2,
-                                                                                                              lim * 3,
-                                                                                                              dimension,
-                                                                                                              trend)
-                            '''if sind ==0 or sind ==1 or sind ==4:
-                              Size2= Size3 '''
 
+
+
+
+
+                            Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(
+                                lim / 20, lim / 2, lim * 3, dimension, trend)
+
+                            #C, no idea why
                             Fluctuate.extend(Evolution)  ##comment if 4 groupd
-                            k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_chemo_vs_immuno(studyName, arm,
-                                                                                                   Size1, Size2, Size3,
-                                                                                                   Size4, Up, Down,
-                                                                                                   Fluctuate, Evolution,
-                                                                                                   Inc, Dec)
-
+                            k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_chemo_vs_immuno(studyName,
+                                                                                                                   arm,Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
                             # k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all(dimension)
+
+                            case0 = 'exp_K_neg'
 
                             list_x, list_u, list_Kmax, error, list_b, list_s, der = run_model_fixed_unsaved(days=firstTime,
                                                                                                     population=firstDim,
                                                                                                     case=case0,
-                                                                                                    k_val=k0, b_val=b0,
+                                                                                                    k_val=k0,
+                                                                                                    b_val=b0,
                                                                                                     u0_val=u0,
                                                                                                     sigma_val=sigma0,
-                                                                                                    Kmax0=K0, a_val=a0,
+                                                                                                    Kmax0=K0,
+                                                                                                    a_val=a0,
                                                                                                     c_val=c0,
-                                                                                                    free='sigma',
+                                                                                                    free='k', #this was sigma
                                                                                                     g_val=g0)
 
+                            print('run_model_fixed_unsaved working')
+                            #Switching arm, to get alternative params
+                            #arm = 'MPDL3280A'
+                            #Turn this one if you want to go from chemo to immuno
+                            #arm = 'DOCETAXEL'
+
                             # what would have happened to docetaxel if they had been given immuno
-                            # k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0 = separate_by_size( studyName, dimension, 'MPDL3280A')
+                            #k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_chemo_vs_immuno(studyName,arm,Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
                             # list_x1, list_u1 = list_x, list_u
+
+
+                            ##Changing case for run_model sim:
+
 
                             list_x1, list_u1, list_Kmax1, error1, list_b1, list_s1 = run_model_sim(days=time,
                                                                                                    population=dimension,
@@ -223,76 +230,69 @@ for studyName in studies:
                                                                                                    sigma_val=list_s,
                                                                                                    Kmax0=K0,
                                                                                                    a_val=list_Kmax,
-                                                                                                   c_val=c0, m_val=1,
+                                                                                                   c_val=c0,
+                                                                                                   m_val=1,
                                                                                                    g_val=g0)
-                            print("Run_model_sim_executed")
+
+
+
+                            print('run_model_sim is executed')
                             r_values.append(list_Kmax)
                             u_values.append(list_u[0])
                             sigma_values.append(list_s)
-                            # if list_x1[-1] > list_x[-1] and list_x1[-1]>list_x1[0]:
-                            # target.append(0)
-                            if list_x1[-1] < list_x[-1]:
-                                target.append(trend)
-                                list_arms.append(arm)
-                            list_trends.append(trend)
-
+                            if list_x1[-1] > list_x[-1]:
+                                target.append(0)
+                            else:
+                                target.append(1)
                             # optimize
                             # list_x1, list_u1, list_Kmax1, error1, list_b1, list_s1, final =run_model_m(days=time, population=dimension, case=case0, k_val=list_b, b_val=b0, u0_val=list_u[0], sigma_val=list_s, Kmax0=K0, a_val=list_Kmax, c_val=c0, step_val=0, g_val=g0, obj='final')
                             # print(list_x1)
                             # print(time)
                             modelPredictions = list_x1
-                            # print(modelPredictions)
-                            # print(dimension- list_x)
-                            # print('pred: ' + str(list_x))
-                            if True:
-                                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
-                                # fig.suptitle("Exponential cost of resistance "  + arm, fontsize=12)
 
-                                # Change scatter to plot for u values and remove linestyle since it's now a line
-                                ax1.plot(time, list_u1, label='u', color='black')
 
-                                ax1.legend(fontsize=12)
+                            #if 'DOCETAXEL' in arm or 'Docetaxel' in arm:
+                            fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5),
+                                                                     constrained_layout=True)
+                            # fig.suptitle("Exponential cost of resistance "  + arm, fontsize=12)
+                            ax1.plot(time, list_u, label='u', color='gray')
+                            ax1.legend(fontsize=12)
+                            # ax2.set_title( "Real tumor evolution under immunotherapy")
+                            # ax1.set_title( " sigma=" +str(round(list_s, 0))  + " b= " + str(b0) + " K= " + str(K0) +", u0: " + str(round(list_u[0],3))+ " r: " + str(round(list_Kmax,3)))# + "m: " + str(list_Kmax1))
+                            # ax2.set_title("m: " + str(list_Kmax1))
+                            ax2.scatter(time, dimension, label="real measurements", color='red',marker='x')
+                            ax2.plot(time, list_x, label='model predictions', color='blue')
+                            ax2.legend(fontsize=12)
+                            ax1.set_xlabel("days from treatment start", fontsize=12)
+                            ax1.set_ylabel("value of u", fontsize=12)
+                            ax2.set_xlabel("days from treatment start", fontsize=12)
+                            ax2.set_ylabel("volume of tumor", fontsize=12)
 
-                                # Remove linestyle for real measurements and change to scatter for crosses
-                                # Use 'x' as the marker for crosses
-                                ax2.scatter(time, dimension, label="real measurements", color='red', marker='x')
+                            ax3.plot(time, list_u1, label='u', color='gray')
+                            ax3.legend(fontsize=12)
+                            # ax4.set_title("Simulated tumor evolution under chemotherapy")
+                            # ax1.set_title( " sigma=" +str(round(list_s, 0))  + " b= " + str(b0) + " K= " + str(K0) +", u0: " + str(round(list_u[0],3))+ " r: " + str(round(list_Kmax,3)))# + "m: " + str(list_Kmax1))
+                            # ax2.set_title("m: " + str(list_Kmax1))
+                            # ax2.scatter(time, dimension, label="real measurements", color='red',
+                            #             marker='x')
+                            ax4.scatter(time, dimension, label="real measurements", color='red',marker='x')
+                            ax4.plot(time, list_x1, label='model predictions', color='blue')
+                            ax4.legend(fontsize=12)
+                            ax3.set_xlabel("days from treatment start", fontsize=12)
+                            ax3.set_ylabel("value of u", fontsize=12)
+                            ax4.set_xlabel("days from treatment start", fontsize=12)
+                            ax4.set_ylabel("volume of tumor", fontsize=12)
 
-                                # Keep the model predictions as a blue line
-                                ax2.plot(time, list_x1, label='model predictions', color='blue')
+                            # Create the folder if it doesn't exist.
+                            save_path = os.path.join(dataset_path, 'Results_nsclc_paper_fighting_treatment' , WHO,
+                                                     f"{studyName}", "Alt", functionToFit,
+                                                     'Plots',f"{arm}",f"{trend}")  # added arm to it
+                            if not os.path.exists(save_path):
+                                os.makedirs(save_path)
 
-                                ax2.legend(fontsize=12)
-
-                                ax1.set_xlabel("days from treatment start", fontsize=12)
-                                ax1.set_ylabel("value of u", fontsize=12)
-
-                                ax2.set_xlabel("days from treatment start", fontsize=12)
-                                ax2.set_ylabel("volume of tumor", fontsize=12)
-
-                                # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
-                                # # fig.suptitle("Exponential cost of resistance "  + arm, fontsize=12)
-                                # ax1.scatter(time, list_u1, label='u', color='black', linestyle='dashed')
-                                # ax1.legend(fontsize=12)
-                                #
-                                # # ax1.set_title( " sigma=" +str(round(list_s, 0))  + " b= " + str(b0) + " K= " + str(K0) +", u0: " + str(round(list_u[0],3))+ " r: " + str(round(list_Kmax,3)))# + "m: " + str(list_Kmax1))
-                                # # ax2.set_title("m: " + str(list_Kmax1))
-                                # ax2.plot(time, dimension, label="real measurements", color='red')
-                                # ax2.plot(time, list_x1, label='model predictions', color='blue')
-                                # ax2.legend(fontsize=12)
-                                # ax1.set_xlabel("days from treatment start", fontsize=12)
-                                # ax1.set_ylabel("value of u", fontsize=12)
-                                # ax2.set_xlabel("days from treatment start", fontsize=12)
-                                # ax2.set_ylabel("volume of tumor", fontsize=12)
-                                # Create the folder if it doesn't exist.
-                                save_path = os.path.join(dataset_path, 'Results_nsclc_paper_firstDim', 'PR_Fixed_plots', f"{studyName}",
-                                                         "alternative prediction", functionToFit, 'Plots',
-                                                         f"{arm}")  # added arm to it
-                                if not os.path.exists(save_path):
-                                    os.makedirs(save_path)
-
-                                # Save the figure
-                                fig.savefig(os.path.join(save_path, str(key)))
-                                #fig.savefig(dataset_path + "alternative prediction/" + str(key))
-                                print("plot succesful")
+                            # Save the figure
+                            fig.savefig(os.path.join(save_path, str(key)))
+                                # fig.savefig(dataset_path + "Simulate immuno/" + str(key))
 
                             '''except:
                                     print(key)
@@ -313,10 +313,11 @@ for studyName in studies:
 
                             result_dict = utils.Write_On_Result_dict(result_dict, arm, trend,
                                                                      categories=['patientID', 'time', 'dimension',
-                                                                                 'prediction', 'rmse', 'rSquare', 'aic',
-                                                                                 'params', 'cancer'],
+                                                                                 'prediction', 'rmse', 'rSquare',
+                                                                                 'aic', 'params', 'cancer'],
                                                                      values=[key, time, dimension, modelPredictions,
-                                                                             abs(dimension[-1] - modelPredictions[-1]),
+                                                                             abs(dimension[-1] - modelPredictions[
+                                                                                 -1]),
                                                                              r2_score(dimension, modelPredictions),
                                                                              (2 * noParameters) - (
                                                                                          2 * np.log(temp_sum)),
@@ -325,10 +326,10 @@ for studyName in studies:
                         except:
                             continue
 
-    # a_file = open(os.path.join(r"D:\Spider Project\Fit\080221", functionToFit, studyName + '.pkl'), "wb")
-        # Properly join paths and check if directory exists
-        full_Pickle_directory_path = os.path.join(dataset_path, 'Results_nsclc_paper_firstDim', 'PR', f"{studyName}",
-                                                  "alternative prediction", functionToFit, 'Pickle_Files')
+            # Properly join paths and check if directory exists
+        full_Pickle_directory_path = os.path.join(dataset_path, 'Results_nsclc_paper_fighting_treatment', WHO,
+                                                             f"{studyName}", "Alt", functionToFit,
+                                                             'Pickle_Files',f"{arm}")
 
         # Check if directory exists and if not, create it
         if not os.path.exists(full_Pickle_directory_path):
@@ -337,7 +338,12 @@ for studyName in studies:
         # Now join the path for the file
         file_path = os.path.join(full_Pickle_directory_path, studyName + '.pkl')
 
-        with builtins.open(file_path, "wb") as a_file:  # Using with ensures the file will be closed after the block
+        with builtins.open(file_path,"wb") as a_file:  # Using with ensures the file will be closed after the block
             pickle.dump(result_dict, a_file)
 
-        a_file.close()
+            a_file.close()
+        # # a_file = open(os.path.join(r"D:\Spider Project\Fit\080221", functionToFit, studyName + '.pkl'), "wb")
+        # a_file = open(os.path.join(dataset_path + functionToFit, studyName + '.pkl'), "wb")
+        #
+        # pickle.dump(result_dict, a_file)
+        # a_file.close()

@@ -168,7 +168,10 @@ for studyName in studies:
                         try:
                             # if True:
                             #if not ('DOCETAXEL' in arm or 'Docetaxel' in arm):
-                            if arm == 'DOCETAXEL' or arm == 'Docetaxel': #chemo off is: if arm != 'DOCETAXEL' and arm != 'Docetaxel':
+                            #C, immuno off
+                            #if arm == 'DOCETAXEL' or arm == 'Docetaxel': #chemo off is: if arm != 'DOCETAXEL' and arm != 'Docetaxel':
+                            #C, chemo off
+                            if arm == 'DOCETAXEL' or arm == 'Docetaxel':
                                 print('Running')
                                 # Size1, Size2, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split_ind(lim/2, lim*2, dimension, trend)
                                 # Size1, Size2,Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split1_ind(lim/lim0[sind], lim/2, lim*3, dimension, trend) #es lim*3
@@ -256,10 +259,8 @@ for studyName in studies:
                                     ax0.legend(fontsize=14)
                                     ax0.set_xlabel("days from chemotherapy start", fontsize=16)
                                     ax0.set_ylabel("value of m", fontsize=16)
-                                    ax1.scatter(time1, list_u, label='u with constant treatment', color='black',
-                                                linestyle='dashed')
-                                    ax1.scatter(time1, list_u1, label='u with optimized treatment', color='red',
-                                                linestyle='dashed')
+                                    ax1.plot(time1, list_u, label='u with constant treatment', color='black')
+                                    ax1.plot(time1, list_u1, label='u with optimized treatment', color='red' )
                                     ax1.set_xlabel("days from treatment start", fontsize=16)
                                     ax1.set_ylabel("value of u", fontsize=16)
                                     ax2.set_xlabel("days from treatment start", fontsize=16)
@@ -270,7 +271,7 @@ for studyName in studies:
                                     ax2.legend(fontsize=14)
 
                                     # Create the folder if it doesn't exist.
-                                    save_path = os.path.join(dataset_path, 'Results_nsclc_paper_optimized_treatment_chemo_fixed_plots_2', "PR_with_correct_sigma_chemo_step_val_on_fixed",
+                                    save_path = os.path.join(dataset_path, 'Results_nsclc_paper_optimized_treatment_Chemotherapy_fixed_plots', "PR_with_correct_sigma_chemo_step_on_integer_false",
                                                              f"{studyName}", "Optimization", functionToFit,
                                                              'Plots',
                                                              f"{arm}")  # added arm to it

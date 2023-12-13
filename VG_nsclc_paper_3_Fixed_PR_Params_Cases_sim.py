@@ -343,23 +343,26 @@ Trend_resistance = ['Up', 'Down', 'Fluctuate', 'Evolution']#trends = ['Up', 'Dow
 
 #List
 gekko_list =[]
-cases_list = [
-    'case3',
-    'case0',
-    'case4',
-    'case5',
-    'exp_r',
-    'exp_K',
-    'exp_K_benefit',
-    'exp_both',
-    'exp',
-    'exp_K_neg'
-]
-case_list = ['case3', 'case0', 'case4', 'case5', 'exp_r', 'exp_K', 'exp_K_benefit', 'exp_both', 'exp', 'exp_K_neg']
+# cases_list = [
+#     'case3',
+#     'case0',
+#     'case4',
+#     'case5',
+#     'exp_r',
+#     'exp_K',
+#     'exp_K_benefit',
+#     'exp_both',
+#     'exp',
+#     'exp_K_neg'
+# ]
+#case_list = ['case3', 'case0', 'case4', 'case5', 'exp_r', 'exp_K', 'exp_K_benefit', 'exp_both', 'exp', 'exp_K_neg']
+#This one is for run_model_sim cases
+case_list = ['case4', 'case0', 'case3', 'case5', 'exp_K', 'exp_K_neg','exp_both']
 
-WHO = 'NSCL_Paper_3_cases_run_model_fixed_no_free_u'
+WHO = 'Results_nsclc_paper_3_sim_casses_new_sim_free_u'
 
-for case_check in cases_list:
+
+for case_check in case_list:
     for studyName in studies:
         sind = studies.index(studyName)
         sp = splits[sind]
@@ -447,17 +450,29 @@ for case_check in cases_list:
 
                                 case0 = case0
 
-                                list_x, list_u, list_Kmax, error, list_b, list_s, der = run_model_fixed_unsaved(days=time,
-                                                                                                        population=dimension,
-                                                                                                        case=case0,
-                                                                                                        k_val=k0,
-                                                                                                        b_val=b0, u0_val=u0,
-                                                                                                        sigma_val=sigma0,
-                                                                                                        Kmax0=K0, a_val=a0,
-                                                                                                        c_val=c0,
-                                                                                                        free='sigma',
-                                                                                                        g_val=g0)
+                                # list_x, list_u, list_Kmax, error, list_b, list_s, der = run_model_fixed_unsaved(days=time,
+                                #                                                                         population=dimension,
+                                #                                                                         case=case0,
+                                #                                                                         k_val=k0,
+                                #                                                                         b_val=b0, u0_val=u0,
+                                #                                                                         sigma_val=sigma0,
+                                #                                                                         Kmax0=K0, a_val=a0,
+                                #                                                                         c_val=c0,
+                                #                                                                         free='sigma',
+                                #                                                                         g_val=g0)
 
+                                #New sim function found run_model_sim_fighting_against_resestitance_question
+                                list_x, list_u, list_Kmax, error, list_b, list_s = run_model_sim_fighting_against_resestitance_question(days=time,
+                                                                                                 population=dimension,
+                                                                                                 case=case0,
+                                                                                                 k_val=k0,
+                                                                                                 b_val=b0,
+                                                                                                 u0_val=u0,
+                                                                                                 sigma_val=sigma0,
+                                                                                                 Kmax0=K0,
+                                                                                                 a_val=a0,
+                                                                                                 c_val=c0, m_val=1,
+                                                                                                 g_val=g0)
 
 
                                 if Test == 1:
@@ -784,7 +799,7 @@ for case_check in cases_list:
                                 # Saving Params
 
                                 # Ensure the directory exists, if not, create it
-                                directory_parm = os.path.join(dataset_path, WHO,f"PR_{case_check}",f"{studyName}", "Sigma_0",functionToFit, paramControl, f"{arm}")  # C, I have to many patients so let me determine which one is used
+                                directory_parm = os.path.join(dataset_path,WHO,f"PR_{case_check}",f"{studyName}", "Sigma_0",functionToFit, paramControl, f"{arm}")  # C, I have to many patients so let me determine which one is used
                                 if not os.path.exists(directory_parm):
                                     os.makedirs(directory_parm)
 
@@ -872,6 +887,8 @@ for case_check in cases_list:
                 a_file.close()
 
 
+
+##Commeted because not needed for this script
 # # Convert the list of dictionaries to a DataFrame
 # gekko_df = pd.DataFrame(gekko_list)
 #
@@ -883,7 +900,7 @@ for case_check in cases_list:
 #
 # print(f" dataframe:{gekko_df}" )
 # print("Done with running")
-#
+
 
 
 # for studyName in studies:

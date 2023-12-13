@@ -234,79 +234,79 @@ def Detect_Trend_Of_Data(vector):
 # i want that if it decreases at the beginning and then it increases more than  first point, it is evolved and if it increases
 
 def run_model_fixed(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, free, g_val, ID): #C, g_val used to have default value of g=0.5
-  # print("Run_model_fixed is runn")
-  # # Printing the values and types in days
-  # print("\n--- days ---")
-  # print(days)
-  # print(f"Total Count: {len(days) if isinstance(days, list) else 'Not a list'}")
-  # print(f"Type: {type(days)}")
-  #
-  # # Printing the values and types in population
-  # print("\n--- population ---")
-  # print(population)
-  # print(f"Total Count: {len(population) if isinstance(population, list) else 'Not a list'}")
-  # print(f"Type: {type(population)}")
-  #
-  # # Printing the values and types in case
-  # print("\n--- case ---")
-  # print(case)
-  # print(f"Type: {type(case)}")
-  #
-  # # Printing the values and types in k_val
-  # print("\n--- k_val ---")
-  # print(k_val)
-  # print(f"Type: {type(k_val)}")
-  #
-  # # Printing the values and types in b_val
-  # print("\n--- b_val ---")
-  # print(b_val)
-  # print(f"Type: {type(b_val)}")
-  #
-  # # Printing the values and types in u0_val
-  # print("\n--- u0_val ---")
-  # print(u0_val)
-  # print(f"Type: {type(u0_val)}")
-  #
-  # # Printing the values and types in sigma_val
-  # print("\n--- sigma_val ---")
-  # print(sigma_val)
-  # print(f"Type: {type(sigma_val)}")
-  #
-  # # Printing the values and types in Kmax0
-  # print("\n--- Kmax0 ---")
-  # print(Kmax0)
-  # print(f"Type: {type(Kmax0)}")
-  #
-  # # Printing the values and types in a_val
-  # print("\n--- a_val ---")
-  # print(a_val)
-  # print(f"Type: {type(a_val)}")
-  #
-  # # Printing the values and types in c_val
-  # print("\n--- c_val ---")
-  # print(c_val)
-  # print(f"Type: {type(c_val)}")
-  #
-  # # Printing the values and types in free
-  # print("\n--- free ---")
-  # print(free)
-  # print(f"Type: {type(free)}")
-  #
-  # # Printing the values and types in g_val
-  # print("\n--- g_val ---")
-  # print(g_val)
-  # print(f"Type: {type(g_val)}")
+  print("Run_model_fixed is runn")
+  # Printing the values and types in days
+  print("\n--- days ---")
+  print(days)
+  print(f"Total Count: {len(days) if isinstance(days, list) else 'Not a list'}")
+  print(f"Type: {type(days)}")
 
-  # # Printing the values and types in ID
-  # print("\n--- ID ---")
-  # print(ID)
-  # print(f"Type: {type(ID)}")
+  # Printing the values and types in population
+  print("\n--- population ---")
+  print(population)
+  print(f"Total Count: {len(population) if isinstance(population, list) else 'Not a list'}")
+  print(f"Type: {type(population)}")
 
-  # # Printing the values and types in Check
-  # print("\n--- Check ---")
-  # print(Check)
-  # print(f"Type: {type(Check)}")
-  # print("END OF RUN MODEL DEBUGGING")
+  # Printing the values and types in case
+  print("\n--- case ---")
+  print(case)
+  print(f"Type: {type(case)}")
+
+  # Printing the values and types in k_val
+  print("\n--- k_val ---")
+  print(k_val)
+  print(f"Type: {type(k_val)}")
+
+  # Printing the values and types in b_val
+  print("\n--- b_val ---")
+  print(b_val)
+  print(f"Type: {type(b_val)}")
+
+  # Printing the values and types in u0_val
+  print("\n--- u0_val ---")
+  print(u0_val)
+  print(f"Type: {type(u0_val)}")
+
+  # Printing the values and types in sigma_val
+  print("\n--- sigma_val ---")
+  print(sigma_val)
+  print(f"Type: {type(sigma_val)}")
+
+  # Printing the values and types in Kmax0
+  print("\n--- Kmax0 ---")
+  print(Kmax0)
+  print(f"Type: {type(Kmax0)}")
+
+  # Printing the values and types in a_val
+  print("\n--- a_val ---")
+  print(a_val)
+  print(f"Type: {type(a_val)}")
+
+  # Printing the values and types in c_val
+  print("\n--- c_val ---")
+  print(c_val)
+  print(f"Type: {type(c_val)}")
+
+  # Printing the values and types in free
+  print("\n--- free ---")
+  print(free)
+  print(f"Type: {type(free)}")
+
+  # Printing the values and types in g_val
+  print("\n--- g_val ---")
+  print(g_val)
+  print(f"Type: {type(g_val)}")
+
+  # Printing the values and types in ID
+  print("\n--- ID ---")
+  print(ID)
+  print(f"Type: {type(ID)}")
+
+  # Printing the values and types in Check
+  print("\n--- Check ---")
+  print(Check)
+  print(f"Type: {type(Check)}")
+  print("END OF RUN MODEL DEBUGGING")
 
   list_x =[]
   list_u =[]
@@ -323,8 +323,9 @@ def run_model_fixed(days, population, case, k_val, b_val, u0_val, sigma_val, Kma
   x.SPLO = 0
   if free =='sigma':
     #sigma= m.Param(0)
-    sigma = m.FV(value=0.01, lb= 0, ub=0.1); sigma.STATUS=1
-    #sigma = m.FV(value=0.01, lb= 0, ub=1); sigma.STATUS=1
+    #sigma = m.FV(value=0.01, lb= 0, ub=0.1); sigma.STATUS=1 #This was uncommetd
+    sigma = m.FV(value=0.01, lb= 0, ub=1); sigma.STATUS=1 #This was commeted
+
 
     k = m.Param(k_val)
   elif free== 'k':
@@ -345,7 +346,9 @@ def run_model_fixed(days, population, case, k_val, b_val, u0_val, sigma_val, Kma
   step = [0 if z<0 else 1 for z in m.time]
   m_param = m.Param(1)
   u = m.Var(value=u0_val, lb=0)#, ub=1)
-  m.free(u)
+
+  #m.free(u) #This was uncommented
+
   a = m.Param(a_val)
   c= m.Param(c_val)
   Kmax= m.Param(Kmax0)
@@ -362,22 +365,22 @@ def run_model_fixed(days, population, case, k_val, b_val, u0_val, sigma_val, Kma
     m.Equations([x.dt()==  x*(r*(m.exp(-g_val*u))*(1-x/(Kmax))-m_param/(k+b*u)-d), u.dt() == sigma*(-g_val*r*(1-x/(Kmax))*(m.exp(-g_val*u))+(b*m_param)/(b*u+k)**2)])
   elif case == 'exp_K':
 
-    # print(f"right statement, exp_K block_Fixed")
-    # # u unbounded for this one
-    # print("\n------Debuging equation------")
-    # print(f"\nEntering case 'exp_K'")
-    #
-    # # Printing the variables and their types before they are used
-    # print(f"g_val: {g_val}, Type: {type(g_val)}")
-    # print(f"u: {u}, Type: {type(u)}")
-    # print(f"r: {r}, Type: {type(r)}")
-    # print(f"x: {x}, Type: {type(x)}")
-    # print(f"Kmax: {Kmax}, Type: {type(Kmax)}")
-    # print(f"m_param: {m_param}, Type: {type(m_param)}")
-    # print(f"k: {k}, Type: {type(k)}")
-    # print(f"b: {b}, Type: {type(b)}")
-    # print(f"d: {d}, Type: {type(d)}")
-    # print("\n ---- END STATEMENT -----")
+    print(f"right statement, exp_K block_Fixed")
+    # u unbounded for this one
+    print("\n------Debuging equation------")
+    print(f"\nEntering case 'exp_K'")
+
+    # Printing the variables and their types before they are used
+    print(f"g_val: {g_val}, Type: {type(g_val)}")
+    print(f"u: {u}, Type: {type(u)}")
+    print(f"r: {r}, Type: {type(r)}")
+    print(f"x: {x}, Type: {type(x)}")
+    print(f"Kmax: {Kmax}, Type: {type(Kmax)}")
+    print(f"m_param: {m_param}, Type: {type(m_param)}")
+    print(f"k: {k}, Type: {type(k)}")
+    print(f"b: {b}, Type: {type(b)}")
+    print(f"d: {d}, Type: {type(d)}")
+    print("\n ---- END STATEMENT -----")
 
     #u unbounded for this one
     m.Equations([x.dt()==  x*(r*(1-x/(Kmax*(m.exp(-g_val*u))))-m_param/(k+b*u)-d), u.dt() == sigma*((-g_val*r*x*(m.exp(g_val*u)))/(Kmax)+(b*m_param)/(b*u+k)**2)])
@@ -413,16 +416,16 @@ def run_model_fixed(days, population, case, k_val, b_val, u0_val, sigma_val, Kma
   list_b = 0
   list_s = 0'''
 
-  ##Getting stuff
-  formatted_time = datetime.now().strftime("%d_%H_%M_%S")
-
-  # Setting path
-  dataset_path = r"C:\Users\Shade\Desktop\Master\Project Game Theory Code\Downloaded file\Edited\SpiderProject_KatherLab"
-  sys.path.insert(0, dataset_path)
-
-  target_dir = os.path.join(dataset_path, "Edited", "Model_params","Run_Singles_Run_model_fixed","Index_kept",f"{ID}", f"k_val-{k_val}",f"b_val-{b_val}",f"Kmax0-{Kmax0}",f"c_val-{c_val}",f"g_val-{g_val}")
-  if not os.path.exists(target_dir):
-    os.makedirs(target_dir)
+  # ##Getting stuff
+  # formatted_time = datetime.now().strftime("%d_%H_%M_%S")
+  #
+  # # Setting path
+  # dataset_path = r"C:\Users\Shade\Desktop\Master\Project Game Theory Code\Downloaded file\Edited\SpiderProject_KatherLab"
+  # sys.path.insert(0, dataset_path)
+  #
+  # target_dir = os.path.join(dataset_path, "Edited", "Model_params","Run_Singles_Run_model_fixed","Index_kept",f"{ID}", f"k_val-{k_val}",f"b_val-{b_val}",f"Kmax0-{Kmax0}",f"c_val-{c_val}",f"g_val-{g_val}")
+  # if not os.path.exists(target_dir):
+  #   os.makedirs(target_dir)
 
 
 
@@ -470,15 +473,15 @@ def run_model_fixed(days, population, case, k_val, b_val, u0_val, sigma_val, Kma
   extended_der = extend_to_length(der, max_length)
   extended_ID = extend_to_length(ID, max_length)
 
-  # Save to CSV
-  filename = os.path.join(target_dir, f"{formatted_time}" + ".csv")
-  with builtins.open(filename, mode='w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(["ID", "list_x", "list_u", "list_Kmax", "error", "list_b", "list_s", "der"])
-    writer.writerows(
-      zip(extended_ID, extended_list_x, extended_list_u, extended_list_Kmax, extended_error, extended_list_b,
-          extended_list_s,
-          extended_der))
+  # # Save to CSV
+  # filename = os.path.join(target_dir, f"{formatted_time}" + ".csv")
+  # with builtins.open(filename, mode='w', newline='') as file:
+  #   writer = csv.writer(file)
+  #   writer.writerow(["ID", "list_x", "list_u", "list_Kmax", "error", "list_b", "list_s", "der"])
+  #   writer.writerows(
+  #     zip(extended_ID, extended_list_x, extended_list_u, extended_list_Kmax, extended_error, extended_list_b,
+  #         extended_list_s,
+  #         extended_der))
 
   print("Modelis complete run (run_model_fixed)")
   return list_x, list_u, list_Kmax, error, list_b, list_s, der
@@ -1561,12 +1564,12 @@ def run_model_fixed_unsaved(days, population, case, k_val, b_val, u0_val, sigma_
 
     #sigma = 0
 
-    sigma = m.FV(value=0.01, lb= 0, ub=0.1); sigma.STATUS=1 #C, This was uncommented, I commented it
-    #sigma = m.FV(value=0.01, lb= 0, ub=1); sigma.STATUS=1
+    sigma = m.FV(value=0.01, lb= 0, ub=0.1); sigma.STATUS=1
+    #sigma = m.FV(value=0.01, lb= 0, ub=1); sigma.STATUS=1 #Never this
 
     k = m.Param(k_val)
-  elif free== 'k':
-    sigma= m.Param(0)
+  elif free == 'k':
+    sigma = m.Param(0)
     k = m.Param(k_val)
 
     #k = m.FV(value=0.1, lb= 0, ub=10); k.STATUS=1
@@ -1582,10 +1585,12 @@ def run_model_fixed_unsaved(days, population, case, k_val, b_val, u0_val, sigma_
   step = [0 if z<0 else 1 for z in m.time]
   m_param = m.Param(1)
   u = m.Var(value=u0_val, lb=0)  # , ub=1)
-  m.free(u)
+
+  m.free(u) #C, commented this to check if this is the code needed
   a = m.Param(a_val)
   c= m.Param(c_val)
   Kmax= m.Param(Kmax0)
+
   if case == 'case3':
     m.Equations([x.dt()==  (x)*(r*(1-u)*(1-x/Kmax)-m_param/(k+b*u)-d), u.dt()==sigma*(b*m_param/((b*u+k)**2)-r*(1-x/(Kmax)))])
   elif case == 'case0':
@@ -1849,7 +1854,9 @@ def run_model_sim(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0
 
     m_param = m.Param(m_val)
     u = m.Var(value=u0_val, lb=0)
-    # m.free(u)
+
+    #C, this one is commented
+    #m.free(u)
 
 
     a = m.Param(a_val)
@@ -1873,11 +1880,21 @@ def run_model_sim(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0
       m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
                    u.dt() == sigma * (
                            (-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+    elif case == 'exp_r': #C, this one was in the older scirpt
+      # u unbounded for this one
+      m.Equations([x.dt() == x * (r * (m.exp(-g_val * u)) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                   u.dt() == sigma * (
+                             -g_val * r * (1 - x / (Kmax)) * (m.exp(-g_val * u)) + (b * m_param) / (b * u + k) ** 2)])
     elif case == 'exp_K_neg':
       # u unbounded for this one
       m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
                    u.dt() == -sigma * (
                            (-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+    elif case == 'exp_both': #C, this one was in the older scirpt
+      m.Equations(
+        [x.dt() == x * (r * (m.exp(-g_val * u)) * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+         u.dt() == sigma * (-g_val * r * (m.exp(-g_val * u)) * (1 - x * (m.exp(g_val * u)) / (Kmax)) + (b * m_param) / (
+                   (b * u + k) ** 2) - g_val * r * x / (Kmax))])
 
     m.options.IMODE = 4
     m.options.SOLVER = 1
@@ -1893,6 +1910,174 @@ def run_model_sim(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0
     # list_s.append(sigma_val)
 
     return list_x, list_u, list_Kmax, error, list_b, list_s
+
+
+def run_model_sim_free_u(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, m_val, g_val):
+  list_x = []
+  list_u = []
+  list_Kmax = []
+  list_b = []
+  error = []
+  der = []
+  list_s = []
+
+  m = GEKKO(remote=False)
+  # eval= days[i][j]
+  eval = days
+  # eval = np.linspace(days[i][j][0], days[i][j][-1], 20, endpoint=True)
+  m.time = eval
+  # disc= np.ones(len(days[i][j]))
+  # x_data= population[i][j]
+  x_data = population
+  x = m.Var(value=x_data[0], lb=0)
+  sigma = m.Param(sigma_val)
+  d = m.Param(c_val)
+  k = m.Param(k_val)
+  b = m.Param(b_val)
+  r = m.Param(a_val)
+  step = [0 if z < 0 else 1 for z in m.time]
+
+  m_param = m.Param(m_val)
+  u = m.Var(value=u0_val, lb=0)
+
+  # C, this one is commented in older run_model_sim
+  m.free(u)
+
+  a = m.Param(a_val)
+  c = m.Param(c_val)
+  Kmax = m.Param(Kmax0)
+
+  if case == 'case4':
+    m.Equations([x.dt() == x * (r * (1 - u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (-2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'case0':
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (m_param * b / ((k + b * u) ** 2))])
+  elif case == 'case3':
+    m.Equations([x.dt() == (x) * (r * (1 - u) * (1 - x / Kmax) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (b * m_param / ((b * u + k) ** 2) - r * (1 - x / (Kmax)))])
+  elif case == 'case5':
+    m.Equations([x.dt() == x * (r * (1 + u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (
+                         (-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_r':  # C, this one was in the older scirpt
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (m.exp(-g_val * u)) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (
+                         -g_val * r * (1 - x / (Kmax)) * (m.exp(-g_val * u)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K_neg':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == -sigma * (
+                         (-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_both':  # C, this one was in the older scirpt
+    m.Equations(
+      [x.dt() == x * (r * (m.exp(-g_val * u)) * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+       u.dt() == sigma * (-g_val * r * (m.exp(-g_val * u)) * (1 - x * (m.exp(g_val * u)) / (Kmax)) + (b * m_param) / (
+               (b * u + k) ** 2) - g_val * r * x / (Kmax))])
+
+  m.options.IMODE = 4
+  m.options.SOLVER = 1
+  m.options.NODES = 5  # collocation nodes
+
+  # m.options.COLDSTART=2
+  m.solve(disp=False, GUI=False)
+
+  list_x = x.value
+  # list_Kmax.append(m_param.value)
+  list_u = u.value
+  # list_b.append(b_val)
+  # list_s.append(sigma_val)
+
+  return list_x, list_u, list_Kmax, error, list_b, list_s
+
+
+def run_model_sim_not_free_u(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, m_val, g_val):
+  list_x = []
+  list_u = []
+  list_Kmax = []
+  list_b = []
+  error = []
+  der = []
+  list_s = []
+
+  m = GEKKO(remote=False)
+  # eval= days[i][j]
+  eval = days
+  # eval = np.linspace(days[i][j][0], days[i][j][-1], 20, endpoint=True)
+  m.time = eval
+  # disc= np.ones(len(days[i][j]))
+  # x_data= population[i][j]
+  x_data = population
+  x = m.Var(value=x_data[0], lb=0)
+  sigma = m.Param(sigma_val)
+  d = m.Param(c_val)
+  k = m.Param(k_val)
+  b = m.Param(b_val)
+  r = m.Param(a_val)
+  step = [0 if z < 0 else 1 for z in m.time]
+
+  m_param = m.Param(m_val)
+  u = m.Var(value=u0_val, lb=0)
+
+  # C, this one is commented in older run_model_sim
+  #m.free(u)
+
+  a = m.Param(a_val)
+  c = m.Param(c_val)
+  Kmax = m.Param(Kmax0)
+
+  if case == 'case4':
+    m.Equations([x.dt() == x * (r * (1 - u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (-2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'case0':
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (m_param * b / ((k + b * u) ** 2))])
+  elif case == 'case3':
+    m.Equations([x.dt() == (x) * (r * (1 - u) * (1 - x / Kmax) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (b * m_param / ((b * u + k) ** 2) - r * (1 - x / (Kmax)))])
+  elif case == 'case5':
+    m.Equations([x.dt() == x * (r * (1 + u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (
+                         (-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_r':  # C, this one was in the older scirpt
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (m.exp(-g_val * u)) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (
+                         -g_val * r * (1 - x / (Kmax)) * (m.exp(-g_val * u)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K_neg':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == -sigma * (
+                         (-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_both':  # C, this one was in the older scirpt
+    m.Equations(
+      [x.dt() == x * (r * (m.exp(-g_val * u)) * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+       u.dt() == sigma * (-g_val * r * (m.exp(-g_val * u)) * (1 - x * (m.exp(g_val * u)) / (Kmax)) + (b * m_param) / (
+               (b * u + k) ** 2) - g_val * r * x / (Kmax))])
+
+  m.options.IMODE = 4
+  m.options.SOLVER = 1
+  m.options.NODES = 5  # collocation nodes
+
+  # m.options.COLDSTART=2
+  m.solve(disp=False, GUI=False)
+
+  list_x = x.value
+  # list_Kmax.append(m_param.value)
+  list_u = u.value
+  # list_b.append(b_val)
+  # list_s.append(sigma_val)
+
+  return list_x, list_u, list_Kmax, error, list_b, list_s
 
 
 # Assuming the variables are defined elsewhere and available in the context.
@@ -1963,7 +2148,7 @@ def create_row(Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, 
   return row
 
 
-def run_model_m(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, step_val, g_val, obj):
+def run_model_m(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, step_val, g_val, obj, Chemo_or_Immuno, step_val_on):
   list_x = []
   list_u = []
   list_Kmax = []
@@ -1981,17 +2166,29 @@ def run_model_m(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, 
   k = m.Param(k_val)
   b = m.Param(b_val)
   r = m.Param(a_val)
-  step = np.random.normal(0.5, 0.5, len(eval))
-  #step = np.ones(len(eval))
-  # step= step_val*step
+  #This creates an distrubution, but it is not perfect, this one would be for chemotherapy sds
+
+  if Chemo_or_Immuno == "Chemo":
+    step = np.random.normal(0.5, 0.5, len(eval))
+    if step_val_on == True:
+      step = step_val*step
+  elif Chemo_or_Immuno == "Immuno":
+    step = np.ones(len(eval))
+
+
+  ##step= step_val*step #this was commeted
   step[0] = 1
-  m_param = m.MV(value=step, lb=0, ub=1, integer=True);
-  m_param.STATUS = 1
+  #C, set integer ti false when the value need to be in between
+  m_param = m.MV(value=step, lb=0, ub=1, integer=False); m_param.STATUS = 1
+  print(f"param{m_param}")
+
+
+  #m.free(m_param)
   u = m.Var(value=u0_val, lb=0)
   a = m.Param(a_val)
   c = m.Param(c_val)
   Kmax = m.Param(Kmax0)
-  #m.free(u) #added this line
+
 
   if case == 'case3':
     m.Equations([x.dt() == (x) * (r * (1 - u) * (1 - x / Kmax) - m_param / (k + b * u) - d),
@@ -2035,3 +2232,75 @@ def run_model_m(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, 
   list_Kmax = m_param.value
 
   return list_x, list_u, list_Kmax, error, list_b, list_s, m.options.OBJFCNVAL
+
+
+def run_model_sim_fighting_against_resestitance_question(days, population, case, k_val, b_val, u0_val, sigma_val, Kmax0, a_val, c_val, m_val, g_val):
+  list_x = []
+  list_u = []
+  list_Kmax = []
+  list_b = []
+  error = []
+  der = []
+  list_s = []
+
+  # try:
+  m = GEKKO(remote=False)
+  eval = days
+  # eval = np.linspace(days[i][j][0], days[i][j][-1], 20, endpoint=True)
+  m.time = eval
+  # disc= np.ones(len(days[i][j]))
+  x_data = population
+  x = m.Var(value=x_data[0], lb=0)
+  sigma = m.Param(sigma_val)
+  d = m.Param(c_val)
+  k = m.Param(k_val)
+  b = m.Param(b_val)
+  r = m.Param(a_val)
+  # step = [0 if z<0 else 1 for z in m.time]
+
+  m_param = m.Param(m_val)
+  u = m.Var(value=u0_val, lb=0)  # , ub=1)
+  #m.free(u)
+  a = m.Param(a_val)
+  c = m.Param(c_val)
+  Kmax = m.Param(Kmax0)
+
+  if case == 'case4':
+    m.Equations([x.dt() == x * (r * (1 - u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (-2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'case0':
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (m_param * b / ((k + b * u) ** 2))])
+  elif case == 'case3':
+    m.Equations([x.dt() == (x) * (r * (1 - u) * (1 - x / Kmax) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (b * m_param / ((b * u + k) ** 2) - r * (1 - x / (Kmax)))])
+  elif case == 'case5':
+    m.Equations([x.dt() == x * (r * (1 + u ** 2) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (2 * u * r * (1 - x / (Kmax)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_r':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (m.exp(-g_val * u)) * (1 - x / (Kmax)) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * (
+                           -g_val * r * (1 - x / (Kmax)) * (m.exp(-g_val * u)) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_K':
+    # u unbounded for this one
+    m.Equations([x.dt() == x * (r * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+                 u.dt() == sigma * ((-g_val * r * x * (m.exp(g_val * u))) / (Kmax) + (b * m_param) / (b * u + k) ** 2)])
+  elif case == 'exp_both':
+    m.Equations(
+      [x.dt() == x * (r * (m.exp(-g_val * u)) * (1 - x / (Kmax * (m.exp(-g_val * u)))) - m_param / (k + b * u) - d),
+       u.dt() == sigma * (-g_val * r * (m.exp(-g_val * u)) * (1 - x * (m.exp(g_val * u)) / (Kmax)) + (b * m_param) / (
+                 (b * u + k) ** 2) - g_val * r * x / (Kmax))])
+
+  m.options.IMODE = 4
+  m.options.SOLVER = 1
+  m.options.NODES = 5  # collocation nodes
+
+  # m.options.COLDSTART=2
+  m.solve(disp=False, GUI=False)
+
+  list_x = x.value
+  list_u = u.value
+  list_Kmax = m_param.value
+
+  return list_x, list_u, list_Kmax, error, list_b, list_s

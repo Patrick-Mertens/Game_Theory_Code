@@ -89,6 +89,9 @@ sigma_values = []
 target = []
 count = 0
 
+
+WHO = '10_nov_PR_Correct_total_parms_fixed_plots_immuno_to_chemo'
+
 for studyName in studies:
     sind = studies.index(studyName)
     sp = splits[sind]
@@ -167,16 +170,19 @@ for studyName in studies:
                         # scaled_days.append(time)
                         # scaled_pop.append(dimension)
 
-                        # firstDim = dimension[0:-3]
-                        # firstTime = time[0:-3]
-                        firstDim = dimension
+                        #firstDim = dimension[0:-3] #this was commented
+                        #firstTime = time[0:-3]
+                        firstDim = dimension #this was uncommented
                         firstTime = time
                         if 'MPDL3280A' in arm:  # or 'Docetaxel' in arm:
                             count += 1
 
                         try:
+                            #C, turn this on if you want to go from chemo to immno, remember dont forget the cases!!!
+                            #if 'DOCETAXEL' in arm or 'Docetaxel' in arm:
+                            if arm != 'DOCETAXEL' and arm != 'Docetaxel':
+                                old_arm = arm
 
-                            if 'DOCETAXEL' in arm or 'Docetaxel' in arm:
                                 # if 'MPDL3280A' in arm:
                                 # count+=1
                                 # Size1, Size2, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec = split_ind(lim/2, lim*2, dimension, trend)
@@ -187,8 +193,8 @@ for studyName in studies:
                                   Size2= Size3 '''
 
                                 Fluctuate.extend(Evolution)  ##comment if 4 groupd
-                                k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size(studyName,
-                                                                                                    dimension, arm)
+                                k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_chemo_vs_immuno(studyName,
+                                                                                                                       arm,Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
                                 # k0,b0,group, case0,  u0, sigma0, K0, a0, c0, g0 = separate_by_size_predict_newdata4k_expK_all(dimension)
 
                                 list_x, list_u, list_Kmax, error, list_b, list_s, der = run_model_fixed_unsaved(days=firstTime,
@@ -204,11 +210,16 @@ for studyName in studies:
                                                                                                         free='sigma',
                                                                                                         g_val=g0)
 
+                                print('run_model_fixed_unsaved working')
+                                #Switching arm, to get alternative params
+                                #arm = 'MPDL3280A'
+                                #Turn this one if you want to go from chemo to immuno
+                                arm = 'DOCETAXEL'
+
                                 # what would have happened to docetaxel if they had been given immuno
-                                k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = separate_by_size(studyName,
-                                                                                                    dimension,
-                                                                                                    'MPDL3280A')
+                                k0, b0, group, case0, u0, sigma0, K0, a0, c0, g0 = PR_separate_by_size_chemo_vs_immuno(studyName,arm,Size1, Size2, Size3, Size4, Up, Down, Fluctuate, Evolution, Inc, Dec)
                                 # list_x1, list_u1 = list_x, list_u
+                                print('switching params are done correctly')
 
                                 list_x1, list_u1, list_Kmax1, error1, list_b1, list_s1 = run_model_sim(days=time,
                                                                                                        population=dimension,
@@ -222,6 +233,11 @@ for studyName in studies:
                                                                                                        c_val=c0,
                                                                                                        m_val=1,
                                                                                                        g_val=g0)
+
+                                ##Switching back
+                                arm = old_arm
+
+                                print('run_model_sim is executed')
                                 r_values.append(list_Kmax)
                                 u_values.append(list_u[0])
                                 sigma_values.append(list_s)
@@ -237,16 +253,18 @@ for studyName in studies:
                                 # print(modelPredictions)
                                 # print(dimension- list_x)
                                 # print('pred: ' + str(list_x))
-                                if 'DOCETAXEL' in arm or 'Docetaxel' in arm:
+                                #C, if you want to plot going from immono to chemo
+                                if arm != 'DOCETAXEL' and arm != 'Docetaxel':
+                                    #if 'DOCETAXEL' in arm or 'Docetaxel' in arm:
                                     fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5),
                                                                              constrained_layout=True)
                                     # fig.suptitle("Exponential cost of resistance "  + arm, fontsize=12)
-                                    ax1.scatter(time, list_u, label='u', color='black', linestyle='dashed')
+                                    ax1.plot(time, list_u, label='u', color='gray')
                                     ax1.legend(fontsize=12)
                                     # ax2.set_title( "Real tumor evolution under immunotherapy")
                                     # ax1.set_title( " sigma=" +str(round(list_s, 0))  + " b= " + str(b0) + " K= " + str(K0) +", u0: " + str(round(list_u[0],3))+ " r: " + str(round(list_Kmax,3)))# + "m: " + str(list_Kmax1))
                                     # ax2.set_title("m: " + str(list_Kmax1))
-                                    ax2.plot(time, dimension, label="real measurements", color='red')
+                                    ax2.scatter(time, dimension, label="real measurements", color='red',marker='x')
                                     ax2.plot(time, list_x, label='model predictions', color='blue')
                                     ax2.legend(fontsize=12)
                                     ax1.set_xlabel("days from treatment start", fontsize=12)
@@ -254,19 +272,31 @@ for studyName in studies:
                                     ax2.set_xlabel("days from treatment start", fontsize=12)
                                     ax2.set_ylabel("volume of tumor", fontsize=12)
 
-                                    ax3.scatter(time, list_u1, label='u', color='black', linestyle='dashed')
+                                    ax3.plot(time, list_u1, label='u', color='gray')
                                     ax3.legend(fontsize=12)
                                     # ax4.set_title("Simulated tumor evolution under chemotherapy")
                                     # ax1.set_title( " sigma=" +str(round(list_s, 0))  + " b= " + str(b0) + " K= " + str(K0) +", u0: " + str(round(list_u[0],3))+ " r: " + str(round(list_Kmax,3)))# + "m: " + str(list_Kmax1))
                                     # ax2.set_title("m: " + str(list_Kmax1))
-                                    ax4.plot(time, dimension, label="real measurements", color='red')
+                                    # ax2.scatter(time, dimension, label="real measurements", color='red',
+                                    #             marker='x')
+                                    ax4.scatter(time, dimension, label="real measurements", color='red',marker='x')
                                     ax4.plot(time, list_x1, label='model predictions', color='blue')
                                     ax4.legend(fontsize=12)
                                     ax3.set_xlabel("days from treatment start", fontsize=12)
                                     ax3.set_ylabel("value of u", fontsize=12)
                                     ax4.set_xlabel("days from treatment start", fontsize=12)
                                     ax4.set_ylabel("volume of tumor", fontsize=12)
-                                    fig.savefig(dataset_path + "Simulate immuno/" + str(key))
+
+                                    # Create the folder if it doesn't exist.
+                                    save_path = os.path.join(dataset_path, 'Results_nsclc_paper_alternative_treatment_immuno_to_chemo' , WHO,
+                                                             f"{studyName}", "Alt", functionToFit,
+                                                             'Plots',f"{arm}")  # added arm to it
+                                    if not os.path.exists(save_path):
+                                        os.makedirs(save_path)
+
+                                    # Save the figure
+                                    fig.savefig(os.path.join(save_path, str(key)))
+                                    # fig.savefig(dataset_path + "Simulate immuno/" + str(key))
 
                                 '''except:
                                         print(key)
@@ -300,8 +330,24 @@ for studyName in studies:
                         except:
                             continue
 
-        # a_file = open(os.path.join(r"D:\Spider Project\Fit\080221", functionToFit, studyName + '.pkl'), "wb")
-        a_file = open(os.path.join(dataset_path + functionToFit, studyName + '.pkl'), "wb")
+            # Properly join paths and check if directory exists
+        full_Pickle_directory_path = os.path.join(dataset_path, 'Results_nsclc_paper_alternative_treatment_immuno_to_chemo', WHO,
+                                                             f"{studyName}", "Alt", functionToFit,
+                                                             'Pickle_Files',f"{arm}")
 
-        pickle.dump(result_dict, a_file)
-        a_file.close()
+        # Check if directory exists and if not, create it
+        if not os.path.exists(full_Pickle_directory_path):
+            os.makedirs(full_Pickle_directory_path)
+
+        # Now join the path for the file
+        file_path = os.path.join(full_Pickle_directory_path, studyName + '.pkl')
+
+        with builtins.open(file_path,"wb") as a_file:  # Using with ensures the file will be closed after the block
+            pickle.dump(result_dict, a_file)
+
+            a_file.close()
+        # # a_file = open(os.path.join(r"D:\Spider Project\Fit\080221", functionToFit, studyName + '.pkl'), "wb")
+        # a_file = open(os.path.join(dataset_path + functionToFit, studyName + '.pkl'), "wb")
+        #
+        # pickle.dump(result_dict, a_file)
+        # a_file.close()
